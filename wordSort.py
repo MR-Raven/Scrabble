@@ -3,7 +3,6 @@ from config import *
 
 def forbiddenCheck(curWord):
     flag = True
-    forbidden = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ",", ".", "/", "-", "&", "'"]
     for i in range(len(curWord)):
         if len(curWord) <= 3 or curWord[i] in forbidden or (curWord[i] == curWord[i].upper() and curWord[i] != '\n'):
             flag = False
@@ -30,7 +29,7 @@ def sorting(wordDataUnsorted, type):
             usedWords.add(curWord)
             wordDataSorted.write(curWord)
             differentHashes.add(hashFunc(curWord))
-            hashesData.write(str(hashFunc(curWord)) + '\n')
+            hashesData.write(str(hashFunc(curWord.rstrip())) + '\n')
         curWord = wordDataUnsorted.readline()
     print(len(usedWords), len(differentHashes))
 

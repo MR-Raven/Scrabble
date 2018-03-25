@@ -1,6 +1,4 @@
-from config import *
-
-def hashFunc(word):
+def hashFunc(word): # Making something trickier doesn't make sence not mainly but also in case of removing huge dictionary
     hashCode = 0
     module = 1000000007
     power = 1
@@ -21,23 +19,12 @@ def hashTabling(type):
     curWord = wordData.readline()
     while curWord:
         curHash = int(hashData.readline())
+        if curWord.rstrip() == "tree":
+            print(curWord, curHash)
         if curHash not in hashTable.keys():
             hashTable[curHash] = set()
-            hashTable[curHash].add(curWord[:-1])
+            hashTable[curHash].add(curWord.rstrip())
         else:
-            hashTable[curHash].add(curWord[:-1])
+            hashTable[curHash].add(curWord.rstrip())
         curWord = wordData.readline()
-
     return hashTable
-
-hashesNative = dict()
-typeNative = "Huge"
-
-hashesAI = dict()
-typeAI = input()
-while typeAI not in typeData:
-    print("No such level, try again")
-    typeAI = input()
-hashesNative = hashTabling(typeNative)
-hashesAI = hashTabling(typeAI)
-print(hashesAI)
