@@ -1,4 +1,5 @@
 from hashing import hashFunc
+from config import *
 
 def forbiddenCheck(curWord):
     flag = True
@@ -35,9 +36,7 @@ def sorting(wordDataUnsorted, type):
 
     wordDataSorted.close()
 
-# Full-sized Sort + Hashing
-typeData = ["Basic", "Big", "Huge", "Large", "Medium", "Small"]
-
+# Full-sized Sort + Hashingas
 for type in typeData:
     path = "/home/pavlik/Pavlik/python/Scrabble/dicts/wordsUnsorted" + type + ".txt"
     # CHANGE PATH IN MY COLLEAGUES COMPUTER
