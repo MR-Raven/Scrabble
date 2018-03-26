@@ -1,6 +1,6 @@
 from hashing import hashFunc
 from itertools import permutations
-
+from config import scores, bonuses, hashesAI
 # NESSESARY?
 class Alphabet:
     alphabetSize = 26
@@ -14,7 +14,6 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
         self.hash = hashFunc(self.string)
 
     def isWord(self):
-        from config import hashesAI
         return self.hash in hashesAI[self.dictType].keys() and self.string in hashesAI[self.dictType][self.hash]
 
     def subWords(self):
@@ -91,11 +90,9 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
 
 class Cell:
     def __init__(self, row, col):
-        from config import bonuses
         self.row = row
         self.col = col
         self.letter = '-'
-        self.bonus = bonuses[row][col]
         self.isEmpty = True
 
     def setLetter(self, letter):
@@ -113,7 +110,6 @@ class WordOnBoard:
         self.cells = cells
 
     def isWord(self):
-        from config import hashesAI
         return self.hash in hashesAI[self.dictType].keys() and self.string in hashesAI[self.dictType][self.hash]
 
     def isConnected(self):
@@ -129,6 +125,35 @@ class WordOnBoard:
                 answer = False
                 break
         return answer
+
+    def addLetter(self, cell):
+        self.string += cell.letter
+        self.cells.append(cell)
+        if not self.isConnected() or not self.isWord():
+            self.string -= cell.letter
+            self.cells.pop()
+
+    def getScore(self):
+        score = 0
+        wordMultiplier = 1
+        for cell in self.cells:
+            lettterMultiplier = 1
+            if bonuses[cell.row][cell.col] == "3W":
+                wordMultiplier *= 3
+                bonuses[cell.row][cell.col] = "00"
+            elif bonuses[cell.row][cell.col] == "2W":
+                wordMultiplier *= 2
+                bonuses[cell.row][cell.col] = "00"
+            elif bonuses[cell.row][cell.col] == "3L":
+                lettterMultiplier = 3
+                bonuses[cell.row][cell.col] = "00"
+            elif bonuses[cell.row][cell.col] == "2L":
+                lettterMultiplier = 2
+                bonuses[cell.row][cell.col] = "00"
+            score += lettterMultiplier * scores[cell.letter]
+        score *= wordMultiplier
+        return score
+
 
 class Bag:
     def __init__(self):
