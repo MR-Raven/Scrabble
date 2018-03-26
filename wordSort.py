@@ -18,9 +18,9 @@ def sorting(wordDataUnsorted, type):
     secondWordsPath = "/home/pavel/MyDocs/Programming/Python/Scrabble/dicts/wordsSorted"
     firstHashesPath = "/home/pavlik/Pavlik/python/Scrabble/hashes/hashes"
     secondHashesPath = "/home/pavel/MyDocs/Programming/Python/Scrabble/hashes/hashes"
-    pathSorted = firstWordsPath + type + ".txt"
+    pathSorted = secondWordsPath + type + ".txt"
     wordDataSorted = open(pathSorted, "w")
-    pathHashes = firstHashesPath + type + ".txt"
+    pathHashes = secondHashesPath + type + ".txt"
     hashesData = open(pathHashes, "w")
     curWord = wordDataUnsorted.readline()
 
@@ -41,8 +41,7 @@ def sorting(wordDataUnsorted, type):
 for type in typeData:
     firstUnsortedPath = "/home/pavlik/Pavlik/python/Scrabble/dicts/wordsUnsorted"  # The first path is for Pavlik, the second one is for Pavel
     secondUnsortedPath = "/home/pavel/MyDocs/Programming/Python/Scrabble/dicts/wordsUnsorted"
-    path = firstUnsortedPath + type + ".txt"
-    # CHANGE PATH IN MY COLLEAGUES COMPUTER
+    path = secondUnsortedPath + type + ".txt"
     wordDataUnsorted = open(path, "r")
     sorting(wordDataUnsorted, type)
     wordDataUnsorted.close()
