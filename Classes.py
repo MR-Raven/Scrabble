@@ -44,6 +44,47 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
                     subWordsData.add(curWord.string) # STRING JUST TO TEST
         return subWordsData
     def allPossibleWords(self, playBoard):
+        emptyData = [[[0, 0] for i in range(playBoard.length)] for j in range(playBoard.height)]
+        for i in range(playBoard.height):
+            curEmpty = 0
+            for j in range(playBoard.length - 1, -1, -1):
+                curEmpty += playBoard.board[i][j].isEmpty
+                emptyData[i][j][0] = curEmpty
+        for i in range(playBoard.length):
+            curEmpty = 0
+            for j in range(playBoard.height - 1, -1, -1):
+                curEmpty += playBoard.board[j][i].isEmpty
+                emptyData[j][i][1] = curEmpty
+        ### Horizontal
+        res = set()
+        for i in range(playBoard.height):
+            for j in range(playBoard.length - 1, -1, -1):
+                if j != 0 and not playBoard[i][j].isEmpty and not playBoard[i][j].isEmpty:
+                    maxLetters = min(7, emptyData[j][i][0])
+                    for curLen in range(maxLetters):
+                        currentEmptiness = 0
+                        temp = 0
+                        stakedLetters = []
+                        while currentEmptiness != maxLetters:
+                            if playBoard.board[i][j + temp].isEmpty:
+                                currentEmptiness += 1
+                            else:
+                                stakedLetters.append((temp, playBoard.board[i][j + temp].letter))
+                            temp += 1
+
+                        subWordsData = set()
+                        for psiWord in permutations(self.string, curLen):
+                            curString = ""
+                            for inserts in range(len(stakedLetters)):
+                                psiWord.insert(stakedLetters[inserts][0], stakedLetters[inserts][1])
+                            for letter in psiWord:
+                                curString += letter
+                            curWord = Word(curString, self.dictType)
+                            if curWord.isWord():
+                                subWordsData.add(curWord.string)  # STRING JUST TO TEST
+                        res.add(subWordsData)
+        print(res)
+
 
 
 class BoardWord:
@@ -63,7 +104,7 @@ class Cell:
         self.row = row
         self.col = col
         self.letter = ''
-        self.bonus = bonuses[str][col]
+        self.bonus = bonuses[row][col]
         self.isEmpty = True
 
 
@@ -116,3 +157,6 @@ class Board:
             print()
 
 myBoard = Board(10, 10)
+myBoard.addWord("hello", 0, 5, 0, 0)
+myBoard.addWord("little", 3, 3, 0, 6)
+myBoard.printBoard()
