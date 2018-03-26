@@ -73,9 +73,18 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
         print(res)
 
 
+class Cell:
+    def __init__(self, row, col):
+        from config import bonuses
+        self.row = row
+        self.col = col
+        self.letter = '-'
+        self.bonus = bonuses[row][col]
+        self.isEmpty = True
+
 
 class WordOnBoard:
-    def __init__(self, cells, type):
+    def __init__(self, cells, type): #Cells is a list of C
         string = ""
         for el in cells:
             string += el.letter
@@ -95,22 +104,12 @@ class WordOnBoard:
         colDif = firstCell.col - secondCell.col
         answer = True
         for i in range(1, len(self.cells) - 1):
-            currentCell = self.cell[i]
-            nextCell = self.cell[i + 1]
-            if currentCell.row - nextCell.str != rowDif or currentCell.col - nextCell.col != colDif:
+            currentCell = self.cells[i]
+            nextCell = self.cells[i + 1]
+            if currentCell.row - nextCell.row != rowDif or currentCell.col - nextCell.col != colDif:
                 answer = False
                 break
         return answer
-
-class Cell:
-    def __init__(self, row, col):
-        from config import bonuses
-        self.row = row
-        self.col = col
-        self.letter = ''
-        self.bonus = bonuses[row][col]
-        self.isEmpty = True
-
 
 class Bag:
     def __init__(self):
@@ -141,6 +140,7 @@ class Bag:
                 break
         return prevLetter
 
+
 class Board:
     def __init__(self, boardLength, boardHeight):
         self.board = [[] for x in range(boardHeight)]
@@ -151,7 +151,7 @@ class Board:
                 self.board[row].append(Cell(row, col))
 
     def addWord(self, word):
-        if word.isWord() and word.isConnected():
+        if word.isConnected():
             rowBegin = word.cells[0].row
             rowEnd = word.cells[len(word.cells) - 1].row
             colBegin = word.cells[0].col
@@ -160,11 +160,13 @@ class Board:
                 counter = 0
                 for letter in word.string:
                     self.board[rowBegin][colBegin + counter].letter = letter
+                    counter += 1
 
             elif colBegin == colEnd:  # Vertical orientation
                 counter = 0
                 for letter in word.string:
                     self.board[rowBegin + counter][colBegin].letter = letter
+                    counter += 1
 
     def printBoard(self):
         for row in range(self.height):
@@ -172,7 +174,11 @@ class Board:
                 print(self.board[row][col].letter, end=" ")
             print()
 
+
+
+
+
+
+
+
 myBoard = Board(10, 10)
-myBoard.addWord("hello", 0, 5, 0, 0)
-myBoard.addWord("little", 3, 3, 0, 6)
-myBoard.printBoard()
