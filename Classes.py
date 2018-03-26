@@ -162,13 +162,13 @@ class Board:
             if rowBegin == rowEnd:  # "Horizontal orientation"
                 counter = 0
                 for letter in word.string:
-                    self.board[rowBegin][colBegin + counter].letter = letter
+                    self.board[rowBegin][colBegin + counter].setLetter(letter)
                     counter += 1
 
             elif colBegin == colEnd:  # Vertical orientation
                 counter = 0
                 for letter in word.string:
-                    self.board[rowBegin + counter][colBegin].letter = letter
+                    self.board[rowBegin + counter][colBegin].setLetter(letter)
                     counter += 1
 
     def printBoard(self):
