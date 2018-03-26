@@ -114,15 +114,6 @@ class WordOnBoard:
                 break
         return answer
 
-class Cell:
-    def __init__(self, row, col):
-        from config import bonuses
-        self.row = row
-        self.col = col
-        self.letter = '_'
-        self.bonus = bonuses[row][col]
-        self.isEmpty = True
-
 class Bag:
     def __init__(self):
         self.bag = {' ': 2, 'a': 9, 'b': 2, 'c': 2, 'd': 4, 'e': 12, 'f': 2, 'g': 3,
@@ -191,14 +182,10 @@ c1 = Cell(5, 6)
 c2 = Cell(6, 6)
 c3 = Cell(7, 6)
 c4 = Cell(8, 6)
-c1.letter = 'n'
-c2.letter = 'o'
-c3.letter = 's'
-c4.letter = 'e'
-c1.isEmpty = False
-c2.isEmpty = False
-c3.isEmpty = False
-c4.isEmpty = False
+c1.setLetter('n')
+c2.setLetter('o')
+c3.setLetter('s')
+c4.setLetter('e')
 
 
 a = WordOnBoard([c1, c2, c3, c4], "Small")
