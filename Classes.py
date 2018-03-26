@@ -42,37 +42,52 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
                 curEmpty += playBoard.board[j][i].isEmpty
                 emptyData[j][i][1] = curEmpty
         ### Horizontal
-        res = set()
+        wordsAndCoords = set()
+        wordsOnly = set()
         for i in range(playBoard.height):
             for j in range(playBoard.length - 1, -1, -1):
-                if j != 0 and not playBoard.board[i][j].isEmpty and not playBoard.board[i][j].isEmpty:
-                    maxLetters = min(5, emptyData[j][i][0]) # Hand size irl
-                    for curLen in range(1, maxLetters):
-                        currentEmptiness = 0
-                        temp = 0
-                        stakedLetters = []
-                        while currentEmptiness != maxLetters:
-                            if playBoard.board[i][j + temp].isEmpty:
-                                currentEmptiness += 1
-                            else:
-                                stakedLetters.append((temp, playBoard.board[i][j + temp].letter))
-                            temp += 1
+                maxLetters = min(len(self.string), emptyData[i][j][0]) # Hand size irl (DO SOMEHOW!!!)
+                for curLen in range(1, maxLetters):
+                    currentEmptiness = 0
+                    temp = 0
+                    stakedLetters = []
+                    prevData = []
+                    for k in range(j - 1, -1, -1):
+                        if playBoard.board[i][k].isEmpty:
+                            break
+                        else:
+                            prevData.insert(0, playBoard.board[i][k].letter)
+                    for k in range(len(prevData)):
+                        stakedLetters.append((k, prevData[k]))
+                    while currentEmptiness != maxLetters:
+                     #   print(i, j, j + temp, maxLetters)
+                        if playBoard.board[i][j + temp].isEmpty:
+                            currentEmptiness += 1
+                        else:
+                            stakedLetters.append((temp + len(prevData), playBoard.board[i][j + temp].letter))
+                        temp += 1
+                    for k in range(j + temp, playBoard.length):
+                        if playBoard.board[i][k].isEmpty:
+                            break
+                        else:
+                            stakedLetters.append((temp + k + len(prevData), playBoard.board[i][j + temp + k].letter))
 
-                        subWordsData = set()
-                        for psiWord in permutations(self.string, curLen):
-                            curString = ""
-                            psiWord = list(psiWord)
-                            for inserts in range(len(stakedLetters)):
-                                psiWord.insert(stakedLetters[inserts][0], stakedLetters[inserts][1])
-                            for letter in psiWord:
-                                curString += letter
-                            print(curString)
-                            curWord = Word(curString, self.dictType)
-                            if curWord.isWord():
-                                subWordsData.add(curWord.string)  # STRING JUST TO TEST
-                        print(subWordsData)
-        #print(res)
-
+                    subWordsData = set()
+                    for psiWord in permutations(self.string, curLen):
+                        curString = ""
+                        psiWord = list(psiWord)
+                        for inserts in range(len(stakedLetters)):
+                            psiWord.insert(stakedLetters[inserts][0], stakedLetters[inserts][1])
+                        for letter in psiWord:
+                            curString += letter
+                      #  print(curString)
+                        curWord = Word(curString, self.dictType)
+                        if curWord.isWord():
+                            subWordsData.add(curWord.string)  # STRING JUST TO TEST
+                    for elem in subWordsData:
+                        wordsAndCoords.add((elem, (i, j)))
+                        wordsOnly.add(elem)
+        print(wordsOnly)
 
 class Cell:
     def __init__(self, row, col):
@@ -190,9 +205,9 @@ c3.setLetter('s')
 c4.setLetter('e')
 
 
-a = WordOnBoard([c1, c2, c3, c4], "Small")
+a = WordOnBoard([c1, c2, c3, c4], "Large")
 myBoard.addWord(a)
 myBoard.printBoard()
 
-b = Word("huma", "Small")
+b = Word("huma", "Large")
 b.allPossibleWords(myBoard)
