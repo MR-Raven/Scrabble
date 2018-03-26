@@ -183,17 +183,4 @@ class Board:
                 print(self.board[row][col].letter, end=" ")
             print()
 
-myBoard = Board(15, 15)
-c1 = Cell(5, 6)
-c2 = Cell(5, 7)
-c3 = Cell(5, 8)
-c4 = Cell(5, 9)
-c1.letter = 'n'
-c2.letter = 'o'
-c3.letter = 's'
-c4.letter = 'e'
 
-
-a = WordOnBoard([c1, c2, c3, c4], "Small")
-myBoard.addWord(a)
-myBoard.printBoard()
