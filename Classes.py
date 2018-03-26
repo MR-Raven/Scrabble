@@ -142,6 +142,7 @@ class Bag:
                 counter += self.bag[el]
             else:
                 break
+        self.removeLetter(prevLetter)
         return prevLetter
 
 
