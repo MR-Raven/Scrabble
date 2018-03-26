@@ -31,17 +31,6 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
                 break
         return answer
 
-    def allPermutations(self):
-        permutationsData = set()
-        for psiWord in permutations(self.string, len(self.string)):
-            curString = ""
-            for letter in psiWord:
-                curString += letter
-            curWord = Word(curString, self.dictType)
-            if curWord.isWord():
-                permutationsData.add(curWord.string) # STRING JUST TO TEST
-        return permutationsData
-
     def subWords(self):
         subWordsData = set()
         for length in range(len(self.string)):
@@ -53,6 +42,8 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
                 if curWord.isWord():
                     subWordsData.add(curWord.string) # STRING JUST TO TEST
         return subWordsData
+    def allPossibleWords(self, playBoard):
+
 
 class Cell:
     def __init__(self, str, col):
@@ -81,7 +72,6 @@ class Bag:
         else:
             return False
 
-
 class Board:
     def __init__(self, boardLength, boardHeight):
         self.board = [[] for x in range(boardHeight)]
@@ -91,7 +81,7 @@ class Board:
             for col in range(boardLength):
                 self.board[str].append(Cell(str, col))
 
-    def addWord(self, word):
+#    def addWord(self, word):
 
 
     def printBoard(self):
@@ -100,9 +90,7 @@ class Board:
                 print(self.board[x][y].letter, end=" ")
             print()
 
-
-
 myBoard = Board(10, 10)
-myBoard.addWord("hello", 0, 5, 0, 0)
-myBoard.addWord("little", 3, 3, 0, 6)
+#myBoard.addWord("hello", 0, 5, 0, 0)
+#myBoard.addWord("little", 3, 3, 0, 6)
 myBoard.printBoard()
