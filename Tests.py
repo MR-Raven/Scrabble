@@ -35,10 +35,10 @@ c1 = Cell(5, 6)
 c2 = Cell(5, 7)
 c3 = Cell(5, 8)
 c4 = Cell(5, 9)
-c1.letter = 'n'
-c2.letter = 'o'
-c3.letter = 's'
-c4.letter = 'e'
+c1.setLetter('n')
+c2.setLetter('o')
+c3.setLetter('s')
+c4.setLetter('e')
 
 
 a = WordOnBoard([c1, c2, c3, c4], "Small")

@@ -114,15 +114,6 @@ class WordOnBoard:
                 break
         return answer
 
-class Cell:
-    def __init__(self, row, col):
-        from config import bonuses
-        self.row = row
-        self.col = col
-        self.letter = '_'
-        self.bonus = bonuses[row][col]
-        self.isEmpty = True
-
 class Bag:
     def __init__(self):
         self.bag = {' ': 2, 'a': 9, 'b': 2, 'c': 2, 'd': 4, 'e': 12, 'f': 2, 'g': 3,
@@ -171,13 +162,13 @@ class Board:
             if rowBegin == rowEnd:  # "Horizontal orientation"
                 counter = 0
                 for letter in word.string:
-                    self.board[rowBegin][colBegin + counter].letter = letter
+                    self.board[rowBegin][colBegin + counter].setLetter(letter)
                     counter += 1
 
             elif colBegin == colEnd:  # Vertical orientation
                 counter = 0
                 for letter in word.string:
-                    self.board[rowBegin + counter][colBegin].letter = letter
+                    self.board[rowBegin + counter][colBegin].setLetter(letter)
                     counter += 1
 
     def printBoard(self):
