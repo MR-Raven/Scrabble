@@ -3,11 +3,11 @@ from Classes import *
 cells = []
 for row in range(5):
     cells.append(Cell(row, 0))
-cells[0].letter = 'a'
-cells[1].letter = 'p'
-cells[2].letter = 'p'
-cells[3].letter = 'l'
-cells[4].letter = 'e'
+cells[0].setLetter('a')
+cells[1].setLetter('p')
+cells[2].setLetter('p')
+cells[3].setLetter('l')
+cells[4].setLetter('e')
 
 
 
@@ -21,11 +21,11 @@ myDict = {}
 alphabet = ' abcdefghijklmnopqrstuvwxyz'
 for letter in alphabet:
     myDict[letter] = 0
-for i in range(10000):
+for i in range(50):
     myDict[myBag.randomLetter()] += 1
 
 for letter in alphabet:
-    print(letter, round(myDict[letter]/100), sep="-", end=" ")
+    print(letter, myDict[letter], sep="-", end=" ")
 print()
 
 
