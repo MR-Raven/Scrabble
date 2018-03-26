@@ -54,6 +54,12 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
                     subWordsData.add(curWord.string) # STRING JUST TO TEST
         return subWordsData
 
+
+# Test
+slovo = Word("zakharcov", "Big")
+print(slovo.subWords())
+
+
 class Cell:
     def __init__(self, str, col):
         from config import bonuses
