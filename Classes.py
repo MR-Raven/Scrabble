@@ -42,7 +42,7 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
         return subWordsData
 
 
-class BoardWord:
+class WordOnBoard:
     def __init__(self, cells, type):
         self.string = ''.join(cells).rstrip()
         self.dictType = type
@@ -53,8 +53,19 @@ class BoardWord:
         from config import hashesAI
         return self.hash in hashesAI[self.dictType].keys() and self.string in hashesAI[self.dictType][self.hash]
 
-
-
+    def isConnected(self):
+        firstCell = self.cells[0]
+        secondCell = self.cells[1]
+        rowDif = firstCell.row - secondCell.row
+        colDif = firstCell.col - secondCell.col
+        answer = True
+        for i in range(1, len(self.cells) - 1):
+            currentCell = self.cell[i]
+            nextCell = self.cell[i + 1]
+            if currentCell.row - nextCell.str != rowDif or currentCell.col - nextCell.col != colDif:
+                answer = False
+                break
+        return answer
 
 class Cell:
     def __init__(self, row, col):
@@ -83,7 +94,6 @@ class Bag:
         else:
             return False
 
-
 class Board:
     def __init__(self, boardLength, boardHeight):
         self.board = [[] for x in range(boardHeight)]
@@ -94,7 +104,7 @@ class Board:
                 self.board[row].append(Cell(row, col))
 
     def addWord(self, word):
-        if word.isWord():
+        if word.isWord() and word.isConnected():
             rowBegin = word.cells[0].row
             rowEnd = word.cells[len(word.cells) - 1].row
             colBegin = word.cells[0].col
