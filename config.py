@@ -32,13 +32,15 @@ def setBonuses():
         bonuses[(14 - x, 14 - y)] = "2L"
     return bonuses
 
+
+
 typeData = ["Basic", "Big", "Large", "Medium", "Small"]
 forbidden = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ",", ".", "/", "-", "&", "'"]
 ###
 hashesAI = dict()
 for typeAI in typeData:
     hashesAI[typeAI] = hashTabling(typeAI)
-#print(hashesAI) Working though
+# print(hashesAI) Working though
 bonuses = setBonuses()
 scores = {' ': 0, 'a': 1, 'b': 2, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2,
               'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1,

@@ -16,16 +16,14 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
     def isWord(self):
         from config import hashesAI
         return self.hash in hashesAI[self.dictType].keys() and self.string in hashesAI[self.dictType][self.hash]
-# Test
-slovo = Word("tree", "Big")
-print(slovo.hash)
 
 
 class Cell:
-    def __init__(self, x, y,  bonus):
+    def __init__(self, x, y):
         from config import bonuses
         self.x = x
         self.y = y
+        self.letter = '-'
         self.bonus = bonuses[(x, y)]
         self.isEmpty = True
 
@@ -36,17 +34,48 @@ class Bag:
            'p': 2, 'q': 1, 'r': 6, 's': 4, 't': 6, 'u': 4, 'v': 2, 'w': 2,
            'x': 1, 'y': 2, 'z': 1}
 
-    def deleteLetter(self, letter):
+    lettersNum = 100
+
+    def removeLetter(self, letter):
         if self.bag[letter] > 0:
             self.bag[letter] -= 1
-            return 1
+            self.lettersNum -= 1
+            return True
         else:
-            return 0
+            return False
 
 
 class Board:
-    def __init__(self, boardLength, boardWidth):
-        board = []
-        for x in range(0, boardLength):
-            for y in range(0, boardWidth):
-                board.append(Cell(x, y))
+    def __init__(self, boardLength, boardHeight):
+        self.board = [[] for x in range(boardHeight)]
+        self.length = boardLength
+        self.height = boardHeight
+        for x in range(boardHeight):
+            for y in range(boardLength):
+                self.board[x].append(Cell(x, y))
+
+    def addWord(self, word, xBegin, xEnd, yBegin, yEnd):
+        if xBegin == xEnd:
+            counter = 0
+            for letter in word:
+                self.board[xBegin][yBegin + counter].letter = letter
+                counter += 1
+
+        elif yBegin == yEnd:
+            counter = 0
+            for letter in word:
+                self.board[xBegin + counter][yBegin].letter = letter
+                counter += 1
+
+    def printBoard(self):
+        for x in range(self.height):
+            for y in range(self.length):
+                print(self.board[x][y].letter, end=" ")
+            print()
+
+
+
+myBoard = Board(10, 10)
+myBoard.addWord("hello", 0, 5, 0, 0)
+myBoard.addWord("little", 3, 3, 0, 6)
+myBoard.printBoard()

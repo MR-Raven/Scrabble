@@ -22,8 +22,6 @@ def hashTabling(type):
     curWord = wordData.readline()
     while curWord:
         curHash = int(hashData.readline())
-        if curWord.rstrip() == "tree":
-            print(curWord, curHash)
         if curHash not in hashTable.keys():
             hashTable[curHash] = set()
             hashTable[curHash].add(curWord.rstrip())
