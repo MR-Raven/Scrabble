@@ -28,10 +28,9 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
                     subWordsData.add(curWord.string) # STRING JUST TO TEST
         return subWordsData
 
-
- Test
-slovo = Word("zakharcov", "Big")
-print(slovo.subWords())
+for i in range(100):
+    slovo = Word("abcdefg", "Big")
+    print(slovo.subWords(), i)
 
 
 class Cell:
