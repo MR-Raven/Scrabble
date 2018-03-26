@@ -82,6 +82,9 @@ class Cell:
         self.bonus = bonuses[row][col]
         self.isEmpty = True
 
+    def setLetter(self, letter):
+        self.letter = letter
+        self.isEmpty = False
 
 class WordOnBoard:
     def __init__(self, cells, type): #Cells is a list of Cell objects
@@ -137,7 +140,7 @@ class Bag:
         else:
             return False
 
-    def randomLetter(self):  # TEST IT
+    def randomLetter(self):
         from random import randint
         letterNum = randint(0, self.lettersNum - 1)
         counter = 0
