@@ -95,9 +95,9 @@ class WordOnBoard:
         colDif = firstCell.col - secondCell.col
         answer = True
         for i in range(1, len(self.cells) - 1):
-            currentCell = self.cell[i]
-            nextCell = self.cell[i + 1]
-            if currentCell.row - nextCell.str != rowDif or currentCell.col - nextCell.col != colDif:
+            currentCell = self.cells[i]
+            nextCell = self.cells[i + 1]
+            if currentCell.row - nextCell.row != rowDif or currentCell.col - nextCell.col != colDif:
                 answer = False
                 break
         return answer
@@ -107,7 +107,7 @@ class Cell:
         from config import bonuses
         self.row = row
         self.col = col
-        self.letter = ''
+        self.letter = '_'
         self.bonus = bonuses[row][col]
         self.isEmpty = True
 
@@ -183,6 +183,6 @@ c3.letter = 's'
 c4.letter = 'e'
 
 
-a = WordOnBoard({c1, c2, c3, c4}, "Big")
+a = WordOnBoard([c1, c2, c3, c4], "Small")
 myBoard.addWord(a)
 myBoard.printBoard()
