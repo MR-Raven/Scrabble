@@ -47,7 +47,7 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
         for i in range(playBoard.height):
             for j in range(playBoard.length - 1, -1, -1):
                 if j != 0 and not playBoard[i][j].isEmpty and not playBoard[i][j].isEmpty:
-                    maxLetters = min(7, emptyData[j][i][0])
+                    maxLetters = min(4, emptyData[j][i][0]) # Hand size irl
                     for curLen in range(maxLetters):
                         currentEmptiness = 0
                         temp = 0
@@ -157,7 +157,17 @@ class Board:
                 print(self.board[row][col].letter, end=" ")
             print()
 
-myBoard = Board(10, 10)
-myBoard.addWord("hello", 0, 5, 0, 0)
-myBoard.addWord("little", 3, 3, 0, 6)
+myBoard = Board(15, 15)
+c1 = Cell(5, 6)
+c2 = Cell(5, 7)
+c3 = Cell(5, 8)
+c4 = Cell(5, 9)
+c1.letter = 'n'
+c2.letter = 'o'
+c3.letter = 's'
+c4.letter = 'e'
+
+
+a = WordOnBoard({c1, c2, c3, c4}, "Big")
+myBoard.addWord(a)
 myBoard.printBoard()
