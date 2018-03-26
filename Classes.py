@@ -8,7 +8,6 @@ class Alphabet:
 
 
 class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S ALSO COUNTING THIS WAY HERE AND IN SORTING !!!
-
     def __init__(self, string, type): # Is local copy of type really nessesary?
         self.string = string.rstrip()
         self.dictType = type
@@ -46,7 +45,7 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
         res = set()
         for i in range(playBoard.height):
             for j in range(playBoard.length - 1, -1, -1):
-                if j != 0 and not playBoard[i][j].isEmpty and not playBoard[i][j].isEmpty:
+                if j != 0 and not playBoard.board[i][j].isEmpty and not playBoard.board[i][j].isEmpty:
                     maxLetters = min(4, emptyData[j][i][0]) # Hand size irl
                     for curLen in range(maxLetters):
                         currentEmptiness = 0
@@ -67,6 +66,7 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
                             for letter in psiWord:
                                 curString += letter
                             curWord = Word(curString, self.dictType)
+                            print(curString) # Where are words?
                             if curWord.isWord():
                                 subWordsData.add(curWord.string)  # STRING JUST TO TEST
                         res.add(subWordsData)
@@ -185,15 +185,22 @@ class Board:
 
 myBoard = Board(15, 15)
 c1 = Cell(5, 6)
-c2 = Cell(5, 7)
-c3 = Cell(5, 8)
-c4 = Cell(5, 9)
+c2 = Cell(6, 6)
+c3 = Cell(7, 6)
+c4 = Cell(8, 6)
 c1.letter = 'n'
 c2.letter = 'o'
 c3.letter = 's'
 c4.letter = 'e'
+c1.isEmpty = False
+c2.isEmpty = False
+c3.isEmpty = False
+c4.isEmpty = False
 
 
 a = WordOnBoard([c1, c2, c3, c4], "Small")
 myBoard.addWord(a)
 myBoard.printBoard()
+
+b = Word("huma", "Small")
+b.allPossibleWords(myBoard)
