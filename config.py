@@ -2,33 +2,33 @@ from hashing import *
 
 def setBonuses():
     bonuses = [[] for n in range(15)]
-    for str in range(0, 15):
+    for row in range(0, 15):
         for col in range(0, 15):
-            bonuses[str].append("00")
+            bonuses[row].append("00")
 
-    for str in range(0, 15, 7):  ### Setting triple word score cells
+    for row in range(0, 15, 7):  ### Setting triple word score cells
         for col in range(0, 15, 7):
-            bonuses[str][col] = "3W"
+            bonuses[row][col] = "3W"
 
-    for str in range(1, 15, 4):   ### Setting triple letter score cells
+    for row in range(1, 15, 4):   ### Setting triple letter score cells
         for col in range(1, 15, 4):
-            bonuses[str][col] = "3L"
+            bonuses[row][col] = "3L"
 
     bonuses[7][7] = "2W"  ### Setting double word score cells
-    for str in range(1, 5):
-        bonuses[str][str] = "2W"
-        bonuses[str][14-str] = "2W"
-        bonuses[14-str][str] = "2W"
-        bonuses[14 - str][14 - str] = "2W"
+    for row in range(1, 5):
+        bonuses[row][row] = "2W"
+        bonuses[row][14-row] = "2W"
+        bonuses[14-row][row] = "2W"
+        bonuses[14 - row][14 - row] = "2W"
 
     doubleLetters = {(0, 3), (2, 6), (3, 7), (6, 6), (7, 3), (6, 2), (3, 0)}   ### Setting double letter score cells
     for cell in doubleLetters:
-        str = cell[0]
+        row = cell[0]
         col = cell[1]
-        bonuses[str][col] = "2L"
-        bonuses[str][14 - col] = "2L"
-        bonuses[14 - str][col] = "2L"
-        bonuses[14 - str][14 - col] = "2L"
+        bonuses[row][col] = "2L"
+        bonuses[row][14 - col] = "2L"
+        bonuses[14 - row][col] = "2L"
+        bonuses[14 - row][14 - col] = "2L"
     return bonuses
 
 

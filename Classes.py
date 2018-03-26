@@ -6,12 +6,13 @@ class Alphabet:
     alphabetSize = 26
     letters = [chr(ord('a') + i) for i in range(26)]
 
+
 class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S ALSO COUNTING THIS WAY HERE AND IN SORTING !!!
-    def __init__(self, string, type, cells): # Is local copy of type really nessesary?
+
+    def __init__(self, string, type): # Is local copy of type really nessesary?
         self.string = string.rstrip()
         self.dictType = type
         self.hash = hashFunc(self.string)
-        self.cells = cells
 
     def isWord(self):
         from config import hashesAI
@@ -45,14 +46,26 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
     def allPossibleWords(self, playBoard):
 
 
+class BoardWord:
+    def __init__(self, cells, type):
+        self.string = ''.join(cells).rstrip()
+        self.dictType = type
+        self.hash = hashFunc(self.string)
+        self.cells = cells
+
+    def isWord(self):
+        from config import hashesAI
+        return self.hash in hashesAI[self.dictType].keys() and self.string in hashesAI[self.dictType][self.hash]
+
 class Cell:
-    def __init__(self, str, col):
+    def __init__(self, row, col):
         from config import bonuses
-        self.str = str
+        self.row = row
         self.col = col
         self.letter = ''
         self.bonus = bonuses[str][col]
         self.isEmpty = True
+
 
 class Bag:
     def __init__(self):
@@ -62,7 +75,6 @@ class Bag:
            'x': 1, 'y': 2, 'z': 1}
 
         self.lettersNum = 100
-
 
     def removeLetter(self, letter):
         if self.bag[letter] > 0:
@@ -77,20 +89,30 @@ class Board:
         self.board = [[] for x in range(boardHeight)]
         self.length = boardLength
         self.height = boardHeight
-        for str in range(boardHeight):
+        for row in range(boardHeight):
             for col in range(boardLength):
-                self.board[str].append(Cell(str, col))
+                self.board[row].append(Cell(row, col))
 
-#    def addWord(self, word):
+    def addWord(self, word):
+        if word.isWord():
+            rowBegin = word.cells[0].row
+            rowEnd = word.cells[len(word.cells) - 1].row
+            colBegin = word.cells[0].col
+            colEnd = word.cells[len(word.cells) - 1].col
+            if rowBegin == rowEnd:  # "Horizontal orientation"
+                counter = 0
+                for letter in word:
+                    self.board[rowBegin][colBegin + counter].letter = letter
 
+            elif colBegin == colEnd:  # Vertical orientation
+                counter = 0
+                for letter in word:
+                    self.board[rowBegin + counter][colBegin].letter = letter
 
     def printBoard(self):
-        for x in range(self.height):
-            for y in range(self.length):
-                print(self.board[x][y].letter, end=" ")
+        for row in range(self.height):
+            for col in range(self.length):
+                print(self.board[row][col].letter, end=" ")
             print()
 
 myBoard = Board(10, 10)
-#myBoard.addWord("hello", 0, 5, 0, 0)
-#myBoard.addWord("little", 3, 3, 0, 6)
-myBoard.printBoard()
