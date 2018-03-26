@@ -76,7 +76,10 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
 
 class WordOnBoard:
     def __init__(self, cells, type):
-        self.string = ''.join(cells).rstrip()
+        string = ""
+        for el in cells:
+            string += el.letter
+        self.string = string.rstrip()
         self.dictType = type
         self.hash = hashFunc(self.string)
         self.cells = cells
@@ -125,6 +128,18 @@ class Bag:
             return True
         else:
             return False
+
+    def randomLetter(self):  # TEST IT
+        from random import randint
+        letterNum = randint(0, self.lettersNum - 1)
+        counter = 0
+        for el in self.bag:
+            if counter <= letterNum:
+                prevLetter = el
+                counter += self.bag[el]
+            else:
+                break
+        return prevLetter
 
 class Board:
     def __init__(self, boardLength, boardHeight):
