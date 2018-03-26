@@ -73,9 +73,18 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
         print(res)
 
 
+class Cell:
+    def __init__(self, row, col):
+        from config import bonuses
+        self.row = row
+        self.col = col
+        self.letter = '-'
+        self.bonus = bonuses[row][col]
+        self.isEmpty = True
+
 
 class WordOnBoard:
-    def __init__(self, cells, type):
+    def __init__(self, cells, type): #Cells is a list of C
         string = ""
         for el in cells:
             string += el.letter
@@ -111,7 +120,6 @@ class Cell:
         self.bonus = bonuses[row][col]
         self.isEmpty = True
 
-
 class Bag:
     def __init__(self):
         self.bag = {' ': 2, 'a': 9, 'b': 2, 'c': 2, 'd': 4, 'e': 12, 'f': 2, 'g': 3,
@@ -141,6 +149,7 @@ class Bag:
                 break
         return prevLetter
 
+
 class Board:
     def __init__(self, boardLength, boardHeight):
         self.board = [[] for x in range(boardHeight)]
@@ -151,7 +160,7 @@ class Board:
                 self.board[row].append(Cell(row, col))
 
     def addWord(self, word):
-        if word.isWord() and word.isConnected():
+        if word.isConnected():
             rowBegin = word.cells[0].row
             rowEnd = word.cells[len(word.cells) - 1].row
             colBegin = word.cells[0].col
@@ -160,11 +169,13 @@ class Board:
                 counter = 0
                 for letter in word.string:
                     self.board[rowBegin][colBegin + counter].letter = letter
+                    counter += 1
 
             elif colBegin == colEnd:  # Vertical orientation
                 counter = 0
                 for letter in word.string:
                     self.board[rowBegin + counter][colBegin].letter = letter
+                    counter += 1
 
     def printBoard(self):
         for row in range(self.height):
