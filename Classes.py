@@ -98,6 +98,7 @@ class BoardWord:
         from config import hashesAI
         return self.hash in hashesAI[self.dictType].keys() and self.string in hashesAI[self.dictType][self.hash]
 
+
 class Cell:
     def __init__(self, row, col):
         from config import bonuses
@@ -142,12 +143,12 @@ class Board:
             colEnd = word.cells[len(word.cells) - 1].col
             if rowBegin == rowEnd:  # "Horizontal orientation"
                 counter = 0
-                for letter in word:
+                for letter in word.string:
                     self.board[rowBegin][colBegin + counter].letter = letter
 
             elif colBegin == colEnd:  # Vertical orientation
                 counter = 0
-                for letter in word:
+                for letter in word.string:
                     self.board[rowBegin + counter][colBegin].letter = letter
 
     def printBoard(self):
