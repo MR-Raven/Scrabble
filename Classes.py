@@ -1,5 +1,4 @@
 from hashing import hashFunc
-from config import *
 
 
 # NESSESARY?
@@ -14,6 +13,7 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
         self.dictType = type
         self.hash = hashFunc(self.string)
     def isWord(self):
+        from config import hashesAI
         return self.hash in hashesAI[self.dictType].keys() and self.string in hashesAI[self.dictType][self.hash]
 # Test
 slovo = Word("tree", "Big")
@@ -26,9 +26,12 @@ class Coordinate:
         self.y = y
 
 
+
 class Cell:
     def __init__(self, coord, letter, bonus):
+        from config import bonuses
         self.x = coord.x
         self.y = coord.y
         self.letter = letter
         self.bonus = bonuses(coord)
+
