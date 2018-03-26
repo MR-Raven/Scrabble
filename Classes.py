@@ -16,16 +16,6 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
     def isWord(self):
         from config import hashesAI
         return self.hash in hashesAI[self.dictType].keys() and self.string in hashesAI[self.dictType][self.hash]
-    def allPermutations(self):
-        permutationsData = set()
-        for psiWord in permutations(self.string, len(self.string)):
-            curString = ""
-            for letter in psiWord:
-                curString += letter
-            curWord = Word(curString, self.dictType)
-            if curWord.isWord():
-                permutationsData.add(curWord.string) # STRING JUST TO TEST
-        return permutationsData
     def subWords(self):
         subWordsData = set()
         for length in range(len(self.string)):
@@ -38,6 +28,12 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
                     subWordsData.add(curWord.string) # STRING JUST TO TEST
         return subWordsData
 
+
+ Test
+slovo = Word("zakharcov", "Big")
+print(slovo.subWords())
+
+
 class Cell:
     def __init__(self, x, y):
         from config import bonuses
@@ -46,14 +42,6 @@ class Cell:
         self.letter = '-'
         self.bonus = bonuses[(x, y)]
         self.isEmpty = True
-
-class Cell:
-    def __init__(self, coord, letter, bonus):
-        from config import bonuses
-        self.x = coord.x
-        self.y = coord.y
-        self.letter = letter
-        self.bonus = bonuses(coord)
 
 class Bag:
     bag = {' ': 2, 'a': 9, 'b': 2, 'c': 2, 'd': 4, 'e': 12, 'f': 2, 'g': 3,
