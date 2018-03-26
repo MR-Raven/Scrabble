@@ -17,7 +17,11 @@ scores = {' ': 0, 'a': 1, 'b': 2, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2,
 
 
 def setBonuses():
-    bonuses = {}
+    global bonuses
+    for x in range(0, 15):
+        for y in range(0, 15):
+            bonuses[Coordinate(x, y)] = "00"
+
     for x in range(0, 15, 7):  ### Setting triple word score cells
         for y in range(0, 15, 7):
             bonuses[Coordinate(x, y)] = "3W"
@@ -41,4 +45,3 @@ def setBonuses():
         bonuses[Coordinate(x, 14 - y)] = "2L"
         bonuses[Coordinate(14 - x, y)] = "2L"
         bonuses[Coordinate(14 - x, 14 - y)] = "2L"
-    return bonuses

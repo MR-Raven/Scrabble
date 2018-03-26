@@ -9,11 +9,14 @@ def hashFunc(word): # Making something trickier doesn't make sence not mainly bu
     return hashCode
 
 def hashTabling(type):
-    pathSorted = "/home/pavlik/Pavlik/python/Scrabble/dicts/wordsSorted" + type + ".txt"
+    firstWordsPath = "/home/pavlik/Pavlik/python/Scrabble/dicts/wordsSorted"     # The first path is for Pavlik, the second one is for Pavel
+    secondWordsPath = "/home/pavel/MyDocs/Programming/Python/Scrabble/dicts/wordsSorted"
+    firstHashesPath = "/home/pavlik/Pavlik/python/Scrabble/hashes/hashes"
+    secondHashesPath = "/home/pavel/MyDocs/Programming/Python/Scrabble/hashes/hashes"
+    pathSorted = firstWordsPath + type + ".txt"
     wordData = open(pathSorted, "r")
-    pathHashes = "/home/pavlik/Pavlik/python/Scrabble/hashes/hashes" + type + ".txt"
+    pathHashes = firstHashesPath + type + ".txt"
     hashData = open(pathHashes, "r")
-    # CHANGE PATH IN MY COLLEAGUES COMPUTER
     hashTable = dict()
 
     curWord = wordData.readline()
