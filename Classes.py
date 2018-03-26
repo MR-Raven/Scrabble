@@ -84,7 +84,7 @@ class Cell:
 
 
 class WordOnBoard:
-    def __init__(self, cells, type): #Cells is a list of C
+    def __init__(self, cells, type): #Cells is a list of Cell objects
         string = ""
         for el in cells:
             string += el.letter
@@ -151,7 +151,7 @@ class Board:
                 self.board[row].append(Cell(row, col))
 
     def addWord(self, word):
-        if word.isConnected():
+        if word.isWord() and word.isConnected():
             rowBegin = word.cells[0].row
             rowEnd = word.cells[len(word.cells) - 1].row
             colBegin = word.cells[0].col
