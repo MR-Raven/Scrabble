@@ -12,6 +12,7 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
         self.string = string.rstrip()
         self.dictType = type
         self.hash = hashFunc(self.string)
+
     def isWord(self):
         from config import hashesAI
         return self.hash in hashesAI[self.dictType].keys() and self.string in hashesAI[self.dictType][self.hash]
@@ -20,18 +21,32 @@ slovo = Word("tree", "Big")
 print(slovo.hash)
 
 
-class Coordinate:
-    def __init__(self, x, y):
+class Cell:
+    def __init__(self, x, y,  bonus):
+        from config import bonuses
         self.x = x
         self.y = y
+        self.bonus = bonuses[(x, y)]
+        self.isEmpty = True
 
 
+class Bag:
+    bag = {' ': 2, 'a': 9, 'b': 2, 'c': 2, 'd': 4, 'e': 12, 'f': 2, 'g': 3,
+           'h': 2, 'i': 9, 'j': 1, 'k': 1, 'l': 4, 'm': 2, 'n': 6, 'o': 8,
+           'p': 2, 'q': 1, 'r': 6, 's': 4, 't': 6, 'u': 4, 'v': 2, 'w': 2,
+           'x': 1, 'y': 2, 'z': 1}
 
-class Cell:
-    def __init__(self, coord, letter, bonus):
-        from config import bonuses
-        self.x = coord.x
-        self.y = coord.y
-        self.letter = letter
-        self.bonus = bonuses(coord)
+    def deleteLetter(self, letter):
+        if self.bag[letter] > 0:
+            self.bag[letter] -= 1
+            return 1
+        else:
+            return 0
 
+
+class Board:
+    def __init__(self, boardLength, boardWidth):
+        board = []
+        for x in range(0, boardLength):
+            for y in range(0, boardWidth):
+                board.append(Cell(x, y))
