@@ -166,7 +166,6 @@ cruel
 crush
 cry
 cup
-cup
 current
 curtain
 curve
@@ -738,7 +737,6 @@ this
 thought
 thread
 throat
-through
 through
 thumb
 thunder

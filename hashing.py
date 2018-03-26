@@ -13,17 +13,15 @@ def hashTabling(type):
     secondWordsPath = "/home/pavel/MyDocs/Programming/Python/Scrabble/dicts/wordsSorted"
     firstHashesPath = "/home/pavlik/Pavlik/python/Scrabble/hashes/hashes"
     secondHashesPath = "/home/pavel/MyDocs/Programming/Python/Scrabble/hashes/hashes"
-    pathSorted = secondWordsPath + type + ".txt"
+    pathSorted = firstWordsPath + type + ".txt"
     wordData = open(pathSorted, "r")
-    pathHashes = secondHashesPath + type + ".txt"
+    pathHashes = firstHashesPath + type + ".txt"
     hashData = open(pathHashes, "r")
     hashTable = dict()
 
     curWord = wordData.readline()
     while curWord:
         curHash = int(hashData.readline())
-        if curWord.rstrip() == "tree":
-            print(curWord, curHash)
         if curHash not in hashTable.keys():
             hashTable[curHash] = set()
             hashTable[curHash].add(curWord.rstrip())

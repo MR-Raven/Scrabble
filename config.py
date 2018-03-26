@@ -39,7 +39,6 @@ forbidden = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", ",", ".", "/", "-
 hashesAI = dict()
 for typeAI in typeData:
     hashesAI[typeAI] = hashTabling(typeAI)
-#print(hashesAI) Working though
 
 bonuses = setBonuses()
 scores = {' ': 0, 'a': 1, 'b': 2, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2,

@@ -30,7 +30,7 @@ def sorting(wordDataUnsorted, type):
         if forbiddenCheck(curWord) and curWord not in usedWords:
             usedWords.add(curWord)
             wordDataSorted.write(curWord)
-            differentHashes.add(hashFunc(curWord))
+            differentHashes.add(hashFunc(curWord.rstrip()))
             hashesData.write(str(hashFunc(curWord.rstrip())) + '\n')
         curWord = wordDataUnsorted.readline()
     print(len(usedWords), len(differentHashes))
