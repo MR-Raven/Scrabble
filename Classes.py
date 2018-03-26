@@ -31,4 +31,4 @@ class Cell:
         self.x = coord.x
         self.y = coord.y
         self.letter = letter
-        self.bonus = getBonus(coord)
+        self.bonus = bonuses(coord)
