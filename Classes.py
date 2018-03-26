@@ -6,16 +6,31 @@ class Alphabet:
     alphabetSize = 26
     letters = [chr(ord('a') + i) for i in range(26)]
 
-
 class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S ALSO COUNTING THIS WAY HERE AND IN SORTING !!!
-    def __init__(self, string, type): # Is local copy of type really nessesary?
+    def __init__(self, string, type, cells): # Is local copy of type really nessesary?
         self.string = string.rstrip()
         self.dictType = type
         self.hash = hashFunc(self.string)
+        self.cells = cells
 
     def isWord(self):
         from config import hashesAI
         return self.hash in hashesAI[self.dictType].keys() and self.string in hashesAI[self.dictType][self.hash]
+
+    def isConnected(self):
+        firstCell = self.cells[0]
+        secondCell = self.cells[1]
+        strDif = firstCell.str - secondCell.str
+        colDif = firstCell.col - secondCell.col
+        answer = True
+        for i in range(1, len(self.cells) - 1):
+            currentCell = self.cell[i]
+            nextCell = self.cell[i + 1]
+            if currentCell.str - nextCell.str != strDif or currentCell.col - nextCell.col != colDif:
+                answer = False
+                break
+        return answer
+
     def allPermutations(self):
         permutationsData = set()
         for psiWord in permutations(self.string, len(self.string)):
@@ -26,6 +41,7 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
             if curWord.isWord():
                 permutationsData.add(curWord.string) # STRING JUST TO TEST
         return permutationsData
+
     def subWords(self):
         subWordsData = set()
         for length in range(len(self.string)):
@@ -39,29 +55,23 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
         return subWordsData
 
 class Cell:
-    def __init__(self, x, y):
+    def __init__(self, str, col):
         from config import bonuses
-        self.x = x
-        self.y = y
-        self.letter = '-'
-        self.bonus = bonuses[(x, y)]
+        self.str = str
+        self.col = col
+        self.letter = ''
+        self.bonus = bonuses[str][col]
         self.isEmpty = True
 
-class Cell:
-    def __init__(self, coord, letter, bonus):
-        from config import bonuses
-        self.x = coord.x
-        self.y = coord.y
-        self.letter = letter
-        self.bonus = bonuses(coord)
-
 class Bag:
-    bag = {' ': 2, 'a': 9, 'b': 2, 'c': 2, 'd': 4, 'e': 12, 'f': 2, 'g': 3,
+    def __init__(self):
+        self.bag = {' ': 2, 'a': 9, 'b': 2, 'c': 2, 'd': 4, 'e': 12, 'f': 2, 'g': 3,
            'h': 2, 'i': 9, 'j': 1, 'k': 1, 'l': 4, 'm': 2, 'n': 6, 'o': 8,
            'p': 2, 'q': 1, 'r': 6, 's': 4, 't': 6, 'u': 4, 'v': 2, 'w': 2,
            'x': 1, 'y': 2, 'z': 1}
 
-    lettersNum = 100
+        self.lettersNum = 100
+
 
     def removeLetter(self, letter):
         if self.bag[letter] > 0:
@@ -77,22 +87,12 @@ class Board:
         self.board = [[] for x in range(boardHeight)]
         self.length = boardLength
         self.height = boardHeight
-        for x in range(boardHeight):
-            for y in range(boardLength):
-                self.board[x].append(Cell(x, y))
+        for str in range(boardHeight):
+            for col in range(boardLength):
+                self.board[str].append(Cell(str, col))
 
-    def addWord(self, word, xBegin, xEnd, yBegin, yEnd):
-        if xBegin == xEnd:
-            counter = 0
-            for letter in word:
-                self.board[xBegin][yBegin + counter].letter = letter
-                counter += 1
+    def addWord(self, word):
 
-        elif yBegin == yEnd:
-            counter = 0
-            for letter in word:
-                self.board[xBegin + counter][yBegin].letter = letter
-                counter += 1
 
     def printBoard(self):
         for x in range(self.height):

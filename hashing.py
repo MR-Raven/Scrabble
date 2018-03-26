@@ -13,9 +13,9 @@ def hashTabling(type):
     secondWordsPath = "/home/pavel/MyDocs/Programming/Python/Scrabble/dicts/wordsSorted"
     firstHashesPath = "/home/pavlik/Pavlik/python/Scrabble/hashes/hashes"
     secondHashesPath = "/home/pavel/MyDocs/Programming/Python/Scrabble/hashes/hashes"
-    pathSorted = firstWordsPath + type + ".txt"
+    pathSorted = secondWordsPath + type + ".txt"
     wordData = open(pathSorted, "r")
-    pathHashes = firstHashesPath + type + ".txt"
+    pathHashes = secondHashesPath + type + ".txt"
     hashData = open(pathHashes, "r")
     hashTable = dict()
 
