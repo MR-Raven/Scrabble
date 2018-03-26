@@ -46,8 +46,8 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
         for i in range(playBoard.height):
             for j in range(playBoard.length - 1, -1, -1):
                 if j != 0 and not playBoard.board[i][j].isEmpty and not playBoard.board[i][j].isEmpty:
-                    maxLetters = min(4, emptyData[j][i][0]) # Hand size irl
-                    for curLen in range(maxLetters):
+                    maxLetters = min(5, emptyData[j][i][0]) # Hand size irl
+                    for curLen in range(1, maxLetters):
                         currentEmptiness = 0
                         temp = 0
                         stakedLetters = []
@@ -61,16 +61,17 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
                         subWordsData = set()
                         for psiWord in permutations(self.string, curLen):
                             curString = ""
+                            psiWord = list(psiWord)
                             for inserts in range(len(stakedLetters)):
                                 psiWord.insert(stakedLetters[inserts][0], stakedLetters[inserts][1])
                             for letter in psiWord:
                                 curString += letter
+                            print(curString)
                             curWord = Word(curString, self.dictType)
-                            print(curString) # Where are words?
                             if curWord.isWord():
                                 subWordsData.add(curWord.string)  # STRING JUST TO TEST
-                        res.add(subWordsData)
-        print(res)
+                        print(subWordsData)
+        #print(res)
 
 
 class Cell:
