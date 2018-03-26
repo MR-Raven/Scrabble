@@ -82,9 +82,12 @@ class Cell:
         self.bonus = bonuses[row][col]
         self.isEmpty = True
 
+    def setLetter(self, letter):
+        self.letter = letter
+        self.isEmpty = False
 
 class WordOnBoard:
-    def __init__(self, cells, type): #Cells is a list of C
+    def __init__(self, cells, type): #Cells is a list of Cell objects
         string = ""
         for el in cells:
             string += el.letter
@@ -137,7 +140,7 @@ class Bag:
         else:
             return False
 
-    def randomLetter(self):  # TEST IT
+    def randomLetter(self):
         from random import randint
         letterNum = randint(0, self.lettersNum - 1)
         counter = 0
@@ -160,7 +163,7 @@ class Board:
                 self.board[row].append(Cell(row, col))
 
     def addWord(self, word):
-        if word.isConnected():
+        if word.isWord() and word.isConnected():
             rowBegin = word.cells[0].row
             rowEnd = word.cells[len(word.cells) - 1].row
             colBegin = word.cells[0].col
