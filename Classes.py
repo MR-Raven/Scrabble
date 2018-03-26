@@ -46,7 +46,7 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
         wordsOnly = set()
         for i in range(playBoard.height):
             for j in range(playBoard.length - 1, -1, -1):
-                maxLetters = min(5, emptyData[i][j][0]) # Hand size irl ()
+                maxLetters = min(len(self.string), emptyData[i][j][0]) # Hand size irl ()
                 for curLen in range(1, maxLetters):
                     currentEmptiness = 0
                     temp = 0
@@ -205,9 +205,9 @@ c3.setLetter('s')
 c4.setLetter('e')
 
 
-a = WordOnBoard([c1, c2, c3, c4], "Large")
+a = WordOnBoard([c1, c2, c3, c4], "Small")
 myBoard.addWord(a)
 myBoard.printBoard()
 
-b = Word("huma", "Large")
+b = Word("abcd", "Small")
 b.allPossibleWords(myBoard)
