@@ -1,35 +1,34 @@
 from hashing import *
 
-
 def setBonuses():
-    bonuses = {}
-    for x in range(0, 15):
-        for y in range(0, 15):
-            bonuses[(x, y)] = "00"
+    bonuses = [[] for n in range(15)]
+    for str in range(0, 15):
+        for col in range(0, 15):
+            bonuses[str].append("00")
 
-    for x in range(0, 15, 7):  ### Setting triple word score cells
-        for y in range(0, 15, 7):
-            bonuses[(x, y)] = "3W"
+    for str in range(0, 15, 7):  ### Setting triple word score cells
+        for col in range(0, 15, 7):
+            bonuses[str][col] = "3W"
 
-    for x in range(1, 15, 4):   ### Setting triple letter score cells
-        for y in range(1, 15, 4):
-            bonuses[(x, y)] = "3L"
+    for str in range(1, 15, 4):   ### Setting triple letter score cells
+        for col in range(1, 15, 4):
+            bonuses[str][col] = "3L"
 
-    bonuses[(7, 7)] = "2W"  ### Setting double word score cells
-    for x in range(1, 5):
-        bonuses[(x, x)] = "2W"
-        bonuses[(x, 14 - x)] = "2W"
-        bonuses[(14 - x, x)] = "2W"
-        bonuses[(14 - x, 14 - x)] = "2W"
+    bonuses[7][7] = "2W"  ### Setting double word score cells
+    for str in range(1, 5):
+        bonuses[str][str] = "2W"
+        bonuses[str][14-str] = "2W"
+        bonuses[14-str][str] = "2W"
+        bonuses[14 - str][14 - str] = "2W"
 
     doubleLetters = {(0, 3), (2, 6), (3, 7), (6, 6), (7, 3), (6, 2), (3, 0)}   ### Setting double letter score cells
     for cell in doubleLetters:
-        x = cell[0]
-        y = cell[1]
-        bonuses[(x, y)] = "2L"
-        bonuses[(x, 14 - y)] = "2L"
-        bonuses[(14 - x, y)] = "2L"
-        bonuses[(14 - x, 14 - y)] = "2L"
+        str = cell[0]
+        col = cell[1]
+        bonuses[str][col] = "2L"
+        bonuses[str][14 - col] = "2L"
+        bonuses[14 - str][col] = "2L"
+        bonuses[14 - str][14 - col] = "2L"
     return bonuses
 
 
