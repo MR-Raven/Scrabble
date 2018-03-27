@@ -202,13 +202,12 @@ class WordOnBoard:
         self.dictType = dictPlayer    # Will we need this Class for AI words, if yes, it is necessary to change the type
         self.hash = hashFunc(self.string)
         self.cells = cells
-        self.Tests = False           # !!!! IF YOU NEED TO TEST SET THIS FIELD AS TRUE !!!!!!!!
 
     def isValidWord(self, board):
         if self.isWord():
             if self.isConnected():
-                if self.isLinked(board) or self.Tests:
-                    if self.areFormedWordsValid(board) or self.Tests:
+                if self.isLinked(board) or isTested:
+                    if self.areFormedWordsValid(board) or isTested:
                         firstCell = self.cells[0]
                         lastCell = self.cells[len(self.string) - 1]
                         if self.getOrientation() == "Vertical":  # Word is vertical
@@ -374,7 +373,6 @@ class Board:
                     self.board[rowBegin + counter][colBegin].setLetter(letter)
                     counter += 1
         else:  # Should i throw an exception here?
-            print("Mistake! Word '", word.string, "' is Invalid", sep="")
             pass
 
     def printBoard(self):
@@ -404,7 +402,6 @@ def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  #Word is a s
 
     word = WordOnBoard(wordCells)
     return word
-
 
 myBoard = Board(15, 15)
 word = WordOnBoardConstructor("nose", 6, 6, 'v')
