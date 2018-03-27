@@ -207,8 +207,8 @@ class WordOnBoard:
     def isValidWord(self, board):
         if self.isWord():
             if self.isConnected():
-                if (self.isLinked(board) or self.Tests):
-                    if self.areFormedWordsValid(board):
+                if self.isLinked(board) or self.Tests:
+                    if self.areFormedWordsValid(board) or self.Tests:
                         firstCell = self.cells[0]
                         lastCell = self.cells[len(self.string) - 1]
                         if self.getOrientation() == "Vertical":  # Word is vertical
