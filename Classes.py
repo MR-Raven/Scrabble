@@ -221,6 +221,7 @@ class WordOnBoard:
         return True
 
     def addLetter(self, cell, isNewCell):
+        prevIsLinked = self.isLinked
         if not isNewCell:
             self.isLinked = True
         self.string += cell.letter
@@ -229,6 +230,7 @@ class WordOnBoard:
             print("Mistake! You can't add this letter", cell.letter, "a word should be connected")
             self.string = self.string[: -1]
             self.cells.pop()
+            self.isLinked = prevIsLinked
 
     def getScore(self, board):
         score = 0
