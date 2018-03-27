@@ -1,6 +1,6 @@
 from hashing import hashFunc
 from itertools import permutations
-from config import scores, bonuses, hashesAI
+from config import *
 
 # NESSESARY?
 class Alphabet:
@@ -9,9 +9,9 @@ class Alphabet:
 
 
 class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S ALSO COUNTING THIS WAY HERE AND IN SORTING !!!
-    def __init__(self, string, type): # Is local copy of type really nessesary?
+    def __init__(self, string): # Is local copy of type really nessesary?
         self.string = string.rstrip()
-        self.dictType = type
+        self.dictType = dictAI
         self.hash = hashFunc(self.string)
 
     def isWord(self):
@@ -82,7 +82,7 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
                         for letter in psiWord:
                             curString += letter
                       #  print(curString)
-                        curWord = Word(curString, self.dictType)
+                        curWord = Word(curString)  # Here in arguments was self.datatype, I deleted it, because I moved all dictTypes to config
                         if curWord.isWord():
                             subWordsData.add(curWord.string)  # STRING JUST TO TEST
                     for elem in subWordsData:
@@ -102,17 +102,17 @@ class Cell:
         self.isEmpty = False
 
 class WordOnBoard:
-    def __init__(self, cells, type): #Cells is a list of Cell objects
+    def __init__(self, cells): #Cells is a list of Cell objects
         string = ""
         for el in cells:
             string += el.letter
         self.string = string.rstrip()
-        self.dictType = type
+        self.dictType = dictPlayer     # Will we need this Class for AI words, if yes, it is necessary to change the type
         self.hash = hashFunc(self.string)
         self.cells = cells
 
-    def isWord(self):
-        return self.hash in hashesAI[self.dictType].keys() and self.string in hashesAI[self.dictType][self.hash]
+    def isWord(self):   #Maybe it's better to rename it (we have the same method in Word class)
+        return self.hash in hashesPlayer[self.dictType].keys() and self.string in hashesPlayer[self.dictType][self.hash]
 
     def isConnected(self):
         firstCell = self.cells[0]
@@ -134,6 +134,7 @@ class WordOnBoard:
         if not self.isConnected() or not self.isWord():
             self.string -= cell.letter
             self.cells.pop()
+            raise
 
     def getScore(self):
         score = 0
@@ -221,6 +222,30 @@ class Board:
                 print(self.board[row][col].letter, end=" ")
             print()
 
+
+def WordOnBoardConstructor(word, rowBegin, colBegin, orientation): #Word is a string, rowBegin and colBegin are numbers, orientation is char ('h' or 'v')
+    wordCells = []
+    if orientation == 'h':
+        rowEnd = rowBegin
+        colEnd = colBegin + len(word) - 1
+        for i in range(colBegin, colEnd + 1):
+            currentLetter = word[i-colBegin]
+            wordCells.append(Cell(rowBegin, i))
+            wordCells[i-colBegin].setLetter(currentLetter)
+
+    elif orientation == 'v':
+        colEnd = colBegin
+        rowEnd = rowBegin + len(word) - 1
+        for i in range(rowBegin, rowEnd + 1):
+            currentLetter = word[i-rowBegin]
+            wordCells.append(Cell(i, colBegin))
+            wordCells[i-rowBegin].setLetter(currentLetter)
+
+    word = WordOnBoard(wordCells)
+    return word
+
+
+
 myBoard = Board(15, 15)
 c1 = Cell(5, 6)
 c2 = Cell(6, 6)
@@ -232,9 +257,9 @@ c3.setLetter('s')
 c4.setLetter('e')
 
 
-a = WordOnBoard([c1, c2, c3, c4], "Small")
+a = WordOnBoard([c1, c2, c3, c4])
 myBoard.addWord(a)
 myBoard.printBoard()
 
-b = Word("abcd", "Small")
+b = Word("abcd")
 b.allPossibleWords(myBoard)
