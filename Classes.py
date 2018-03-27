@@ -177,11 +177,11 @@ class WordOnBoard:
         self.dictType = dictPlayer    # Will we need this Class for AI words, if yes, it is necessary to change the type
         self.hash = hashFunc(self.string)
         self.cells = cells
-        self.IsLinked = False           # !!!! IF YOU NEED TO TEST SET THIS FIELD AS TRUE !!!!!!!!
+        self.Tests = False           # !!!! IF YOU NEED TO TEST SET THIS FIELD AS TRUE !!!!!!!!
 
     def isValidWord(self, board):
         if self.hash in hashesPlayer[self.dictType].keys() and self.string in hashesPlayer[self.dictType][self.hash]:
-            if self.isConnected() and (self.isLinked(board) or self.IsLinked):
+            if self.isConnected() and (self.isLinked(board) or self.Tests):
                 firstCell = self.cells[0]
                 lastCell = self.cells[len(self.string) - 1]
                 rowDif = firstCell.row - lastCell.row
@@ -203,7 +203,7 @@ class WordOnBoard:
                 return True
         return False
 
-    def isLinked(self, board):
+    def isLinked(self, board):  # Checks whether there are neighbors from old Cells
         firstCell = self.cells[0]
         lastCell = self.cells[len(self.string) - 1]
         if firstCell.neighborsNum(board) > 1 or lastCell.neighborsNum(board) > 1:
@@ -328,7 +328,7 @@ class Board:
             print()
 
 
-def WordOnBoardConstructor(word, rowBegin, colBegin, orientation): #Word is a string, rowBegin and colBegin are numbers, orientation is a char ('h' or 'v')
+def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  #Word is a string, rowBegin and colBegin are numbers, orientation is a char ('h' or 'v')
     wordCells = []
     if orientation == 'h':
         rowEnd = rowBegin
@@ -352,9 +352,5 @@ def WordOnBoardConstructor(word, rowBegin, colBegin, orientation): #Word is a st
 
 myBoard = Board(15, 15)
 word = WordOnBoardConstructor("nose", 6, 6, 'v')
-word.isLinked = True
 myBoard.addWord(word)
 myBoard.printBoard()
-
-b = WordAI("appl")
-b.allPossibleWords(myBoard)
