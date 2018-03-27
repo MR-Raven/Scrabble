@@ -219,14 +219,18 @@ class WordOnBoard:
         return True
 
     def addLetter(self, cell, isNewCell):
+        prevIsLinked = self.isLinked
+        self.string += cell.letter
+        self.hash = hashFunc(self.string)
+        self.cells.append(cell)
         if not isNewCell:
             self.isLinked = True
-        self.string += cell.letter
-        self.cells.append(cell)
         if not self.isConnected():  # Should I throw an Exception here?
-            print("MISTAKE!")
+            print("Mistake! You can't add the letter '", cell.letter, "', a word should be connected", sep="")
             self.string = self.string[: -1]
+            self.hash = hashFunc(self.string)
             self.cells.pop()
+            self.isLinked = prevIsLinked
 
     def getScore(self, board):
         score = 0
@@ -264,6 +268,7 @@ class Bag:
             self.bag[letter] -= 1
             self.lettersNum -= 1
         else: # Should I throw an Exception here?
+            print("Mistake! It is impossible to take the letter '", letter, "'", sep="")
             pass
 
     def randomLetter(self):
@@ -307,6 +312,7 @@ class Board:
                     self.board[rowBegin + counter][colBegin].setLetter(letter)
                     counter += 1
         else:  # Should i throw an exception here?
+            print("Mistake! Word '", word.string, "' is Invalid", sep="")
             pass
 
     def printBoard(self):
