@@ -92,11 +92,9 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
 
 class Cell:
     def __init__(self, row, col):
-        from config import bonuses
         self.row = row
         self.col = col
         self.letter = '-'
-        self.bonus = bonuses[row][col]
         self.isEmpty = True
 
     def setLetter(self, letter):
@@ -114,7 +112,6 @@ class WordOnBoard:
         self.cells = cells
 
     def isWord(self):
-        from config import hashesAI
         return self.hash in hashesAI[self.dictType].keys() and self.string in hashesAI[self.dictType][self.hash]
 
     def isConnected(self):
