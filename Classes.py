@@ -82,7 +82,7 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
                         for letter in psiWord:
                             curString += letter
                       #  print(curString)
-                        curWord = Word(curString)  # Here in arguments was self.datatype, I deleted it, because I moved all dictTypes to config
+                        curWord = Word(curString)  # Here in the arguments was self.datatype, I deleted it, because I moved all dictTypes to config
                         if curWord.isWord():
                             subWordsData.add(curWord.string)  # STRING JUST TO TEST
                     for elem in subWordsData:
@@ -131,10 +131,9 @@ class WordOnBoard:
     def addLetter(self, cell):
         self.string += cell.letter
         self.cells.append(cell)
-        if not self.isConnected() or not self.isWord():
+        if not self.isConnected() or not self.isWord():  # Should I throw an Exception here?
             self.string -= cell.letter
             self.cells.pop()
-            raise
 
     def getScore(self):
         score = 0
@@ -171,9 +170,8 @@ class Bag:
         if self.bag[letter] > 0:
             self.bag[letter] -= 1
             self.lettersNum -= 1
-            return True
-        else:
-            return False
+        else: # Should I throw an Exception here?
+            pass
 
     def randomLetter(self):
         from random import randint
@@ -223,7 +221,7 @@ class Board:
             print()
 
 
-def WordOnBoardConstructor(word, rowBegin, colBegin, orientation): #Word is a string, rowBegin and colBegin are numbers, orientation is char ('h' or 'v')
+def WordOnBoardConstructor(word, rowBegin, colBegin, orientation): #Word is a string, rowBegin and colBegin are numbers, orientation is a char ('h' or 'v')
     wordCells = []
     if orientation == 'h':
         rowEnd = rowBegin

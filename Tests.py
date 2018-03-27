@@ -12,22 +12,16 @@ cells[4].setLetter('e')
 
 
 #WordOnBoard TESTS
-firstWord = WordOnBoard(cells, "Large")
+firstWord = WordOnBoard(cells)
 
 
 #BAG TESTS
 myBag = Bag()
-myDict = {}
-alphabet = ' abcdefghijklmnopqrstuvwxyz'
-for letter in alphabet:
-    myDict[letter] = 0
-for i in range(50):
-    myDict[myBag.randomLetter()] += 1
+myBag.removeLetter('z')
 
-for letter in alphabet:
-    print(letter, myDict[letter], sep="-", end=" ")
+for letter in myBag.bag:
+    print(letter, myBag.bag[letter], sep="-", end=" ")
 print()
-
 
 # BOARD TESTS
 myBoard = Board(15, 15)
@@ -41,6 +35,6 @@ c3.setLetter('s')
 c4.setLetter('e')
 
 
-a = WordOnBoard([c1, c2, c3, c4], "Small")
+a = WordOnBoard([c1, c2, c3, c4])
 myBoard.addWord(a)
 myBoard.printBoard()
