@@ -42,7 +42,7 @@ for dict in dictionaries:
     hashesPlayer[dict] = hashTabling(dict)
 dictAI = "Big"
 dictPlayer = "Large"
-isTested = False   # !!!! IF YOU NEED TO TEST SET THIS FIELD AS TRUE !!!!!!!!
+isTested = True   # !!!! IF YOU NEED TO TEST SET THIS FIELD AS TRUE !!!!!!!!
 bonuses = setBonuses()
 scores = {' ': 0, 'a': 1, 'b': 2, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2,
               'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1,

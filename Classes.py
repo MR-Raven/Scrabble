@@ -265,12 +265,12 @@ class WordOnBoard:
     def areFormedWordsValid(self, board):  # Checks whether all new formed words are valid
         if self.getOrientation() == "Horizontal":
             for cell in self.cells:
-                if not cell.generatedWord(board, "Vertical").isWord():
+                if not cell.generateWord(board, "Vertical").isWord():
                     return False
             return self.cells[0].generateWord(board, "Horizontal").isWord()
         else:
             for cell in self.cells:
-                if not cell.generatedWord(board, "Horizontal").isWord():
+                if not cell.generateWord(board, "Horizontal").isWord():
                     return False
             return self.cells[0].generateWord(board, "Vertical").isWord()
 
@@ -380,6 +380,7 @@ class Board:
             for col in range(self.length):
                 print(self.board[row][col].letter, end=" ")
             print()
+        print()
 
 
 def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  #Word is a string, rowBegin and colBegin are numbers, orientation is a char ('h' or 'v')
