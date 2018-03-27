@@ -226,7 +226,7 @@ class WordOnBoard:
         self.string += cell.letter
         self.cells.append(cell)
         if not self.isConnected():  # Should I throw an Exception here?
-            print("MISTAKE!")
+            print("Mistake! You can't add this letter", cell.letter, "a word should be connected")
             self.string = self.string[: -1]
             self.cells.pop()
 
@@ -266,6 +266,7 @@ class Bag:
             self.bag[letter] -= 1
             self.lettersNum -= 1
         else: # Should I throw an Exception here?
+            print("Mistake! It is impossible to delete this letter:", letter)
             pass
 
     def randomLetter(self):
@@ -309,6 +310,7 @@ class Board:
                     self.board[rowBegin + counter][colBegin].setLetter(letter)
                     counter += 1
         else:  # Should i throw an exception here?
+            print("Mistake!", word.string, "is Invalid")
             pass
 
     def printBoard(self):
