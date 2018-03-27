@@ -140,11 +140,14 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
         print(wordsOnlyV)
 
 class Cell:
-    def __init__(self, row, col):
+    def __init__(self, row, col, letter='-'):
         self.row = row
         self.col = col
-        self.letter = '-'
-        self.isEmpty = True
+        self.letter = letter
+        if letter == '-':
+            self.isEmpty = True
+        else:
+            self.isEmpty = False
 
     def setLetter(self, letter):
         self.letter = letter
@@ -223,7 +226,8 @@ class WordOnBoard:
         self.string += cell.letter
         self.cells.append(cell)
         if not self.isConnected():  # Should I throw an Exception here?
-            self.string -= cell.letter
+            print("MISTAKE!")
+            self.string = self.string[: -1]
             self.cells.pop()
 
     def getScore(self, board):
