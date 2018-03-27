@@ -8,7 +8,7 @@ class Alphabet:
     letters = [chr(ord('a') + i) for i in range(26)]
 
 
-class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S ALSO COUNTING THIS WAY HERE AND IN SORTING !!!
+class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S ALSO COUNTING THIS WAY HERE AND IN SORTING !!!
     def __init__(self, string): # Is local copy of type really nessesary?
         self.string = string.rstrip()
         self.dictType = dictAI
@@ -82,13 +82,62 @@ class Word: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S 
                         for letter in psiWord:
                             curString += letter
                       #  print(curString)
-                        curWord = Word(curString)  # Here in the arguments was self.datatype, I deleted it, because I moved all dictTypes to config
+                        curWord = WordAI(curString)  # Here in the arguments was self.datatype, I deleted it, because I moved all dictTypes to config
+                        if curWord.isWord():
+                            subWordsData.add(curWord.string)  # STRING JUST TO TEST
+                    for elem in subWordsData:
+                        wordsAndCoords.add((elem, (i, j)))
+                        wordsOnly.add(elem)
+        print(wordsAndCoords)
+
+        ### Vertical
+        wordsAndCoords = set()
+        wordsOnly = set()
+        for i in range(playBoard.height):
+            for j in range(playBoard.length - 1, -1, -1):
+                maxLetters = min(len(self.string), emptyData[i][j][0]) # Hand size irl ()
+                for curLen in range(1, maxLetters):
+                    currentEmptiness = 0
+                    temp = 0
+                    stakedLetters = []
+                    prevData = []
+                    for k in range(j - 1, -1, -1):
+                        if playBoard.board[i][k].isEmpty:
+                            break
+                        else:
+                            prevData.insert(0, playBoard.board[i][k].letter)
+                    for k in range(len(prevData)):
+                        stakedLetters.append((k, prevData[k]))
+                    while currentEmptiness != maxLetters:
+                     #   print(i, j, j + temp, maxLetters)
+                        if playBoard.board[i][j + temp].isEmpty:
+                            currentEmptiness += 1
+                        else:
+                            stakedLetters.append((temp + len(prevData), playBoard.board[i][j + temp].letter))
+                        temp += 1
+                    for k in range(j + temp, playBoard.length):
+                        if playBoard.board[i][k].isEmpty:
+                            break
+                        else:
+                            stakedLetters.append((temp + k + len(prevData), playBoard.board[i][j + temp + k].letter))
+
+                    subWordsData = set()
+                    for psiWord in permutations(self.string, curLen):
+                        curString = ""
+                        psiWord = list(psiWord)
+                        for inserts in range(len(stakedLetters)):
+                            psiWord.insert(stakedLetters[inserts][0], stakedLetters[inserts][1])
+                        for letter in psiWord:
+                            curString += letter
+                      #  print(curString)
+                        curWord = WordAI(curString)  # Here in the arguments was self.datatype, I deleted it, because I moved all dictTypes to config
                         if curWord.isWord():
                             subWordsData.add(curWord.string)  # STRING JUST TO TEST
                     for elem in subWordsData:
                         wordsAndCoords.add((elem, (i, j)))
                         wordsOnly.add(elem)
         print(wordsOnly)
+
 
 class Cell:
     def __init__(self, row, col):
@@ -259,5 +308,5 @@ a = WordOnBoard([c1, c2, c3, c4])
 myBoard.addWord(a)
 myBoard.printBoard()
 
-b = Word("abcd")
+b = WordAI("abcd")
 b.allPossibleWords(myBoard)
