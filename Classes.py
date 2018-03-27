@@ -48,7 +48,8 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
         for i in range(playBoard.height):
             for j in range(playBoard.length - 1, -1, -1):
                 maxLetters = min(len(self.string), emptyData[i][j][0]) # Hand size irl ()
-                for curLen in range(1, maxLetters):
+                print(maxLetters)
+                for curLen in range(1, maxLetters + 1):
                     currentEmptiness = 0
                     temp = 0
                     stakedLetters = []
@@ -61,7 +62,6 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
                     for k in range(len(prevData)):
                         stakedLetters.append((k, prevData[k]))
                     while currentEmptiness != maxLetters:
-                     #   print(i, j, j + temp, maxLetters)
                         if playBoard.board[i][j + temp].isEmpty:
                             currentEmptiness += 1
                         else:
@@ -96,7 +96,7 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
         for j in range(playBoard.length):
             for i in range(playBoard.height - 1, -1, -1):
                 maxLetters = min(len(self.string), emptyData[i][j][1]) # Hand size irl ()
-                for curLen in range(1, maxLetters):
+                for curLen in range(1, maxLetters + 1):
                     currentEmptiness = 0
                     temp = 0
                     stakedLetters = []
@@ -109,7 +109,6 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
                     for k in range(len(prevData)):
                         stakedLetters.append((k, prevData[k]))
                     while currentEmptiness != maxLetters:
-                     #   print(i, j, j + temp, maxLetters)
                         if playBoard.board[i + temp][j].isEmpty:
                             currentEmptiness += 1
                         else:
@@ -129,7 +128,6 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
                             psiWord.insert(stakedLetters[inserts][0], stakedLetters[inserts][1])
                         for letter in psiWord:
                             curString += letter
-                      #  print(curString)
                         curWord = WordAI(curString)
                         if curWord.isWord():
                             subWordsData.add(curWord.string)
@@ -352,29 +350,11 @@ def WordOnBoardConstructor(word, rowBegin, colBegin, orientation): #Word is a st
     return word
 
 
-"""
 myBoard = Board(15, 15)
-c1 = Cell(5, 6)
-c2 = Cell(6, 6)
-c3 = Cell(7, 6)
-c4 = Cell(8, 6)
-c5 = Cell(5, 7)
-c6 = Cell(5, 8)
-c7 = Cell(5, 9)
-c1.setLetter('n')
-c2.setLetter('o')
-c3.setLetter('s')
-c4.setLetter('e')
-c5.setLetter('i')
-c6.setLetter('s')
-c7.setLetter('t')
-
-a = WordOnBoard([c1, c2, c3, c4])
-b = WordOnBoard([c5, c6, c7])
-myBoard.addWord(a)
-myBoard.addWord(b)
+word = WordOnBoardConstructor("nose", 6, 6, 'v')
+word.isLinked = True
+myBoard.addWord(word)
 myBoard.printBoard()
 
-b = WordAI("huma")
+b = WordAI("appl")
 b.allPossibleWords(myBoard)
-"""
