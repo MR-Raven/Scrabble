@@ -151,6 +151,31 @@ class Cell:
         self.letter = letter
         self.isEmpty = False
 
+    def generateWord(self, board, orientation): # Returns a word, that contains this cell
+        if orientation == "Horizontal":             # Orientation is a string ("Horizontal" or "Vertical")
+            leftCol = self.col
+            while leftCol >= 0 and board.board[self.row][leftCol] != '-':
+                leftCol -= 1
+            leftCol += 1
+            rightCol = self.col
+            while rightCol < board.length and board.board[self.row][rightCol] != '-':
+                rightCol += 1
+            cells = []
+            for column in range(leftCol, rightCol):
+                cells.append(board.board[self.row][column])
+        else:
+            bottomRow = self.row
+            while bottomRow >= 0 and board.board[bottomRow][self.col] != '-':
+                bottomRow -= 1
+            bottomRow += 1
+            topRow = self.row
+            while topRow < board.height and board.board[topRow][self.col] != '-':
+                topRow += 1
+            cells = []
+            for row in range(bottomRow, topRow):
+                cells.append(board.board[row][self.col])
+        return WordOnBoard(cells)
+
     def neighborsNum(self, board):
         boardCopy = [[] for row in range(board.height + 2)]
         for row in range(board.height + 2):
@@ -180,29 +205,39 @@ class WordOnBoard:
         self.Tests = False           # !!!! IF YOU NEED TO TEST SET THIS FIELD AS TRUE !!!!!!!!
 
     def isValidWord(self, board):
-        if self.hash in hashesPlayer[self.dictType].keys() and self.string in hashesPlayer[self.dictType][self.hash]:
-            if self.isConnected() and (self.isLinked(board) or self.Tests):
-                firstCell = self.cells[0]
-                lastCell = self.cells[len(self.string) - 1]
-                rowDif = firstCell.row - lastCell.row
-                colDif = firstCell.col - lastCell.col
-                if colDif == 0:  # Word is vertical
-                    if firstCell.row - 1 >= 0:
-                        if board.board[firstCell.row - 1][firstCell.col].letter != '-':
-                            return False
-                    if lastCell.row + 1 < board.height:
-                        if board.board[lastCell.row + 1][lastCell.col].letter != '-':
-                            return False
-                else:   # Word is horizontal
-                    if firstCell.col - 1 >= 0:
-                        if board.board[firstCell.row][firstCell.col - 1].letter != '-':
-                            return False
-                    if lastCell.row + 1 < board.length:
-                        if board.board[lastCell.row][lastCell.col + 1].letter != '-':
-                            return False
-                return True
+        if self.isWord():
+            if self.isConnected():
+                if (self.isLinked(board) or self.Tests):
+                    if self.areFormedWordsValid(board):
+                        firstCell = self.cells[0]
+                        lastCell = self.cells[len(self.string) - 1]
+                        if self.getOrientation() == "Vertical":  # Word is vertical
+                            if firstCell.row - 1 >= 0:
+                                if board.board[firstCell.row - 1][firstCell.col].letter != '-':
+                                    return False
+                            if lastCell.row + 1 < board.height:
+                                if board.board[lastCell.row + 1][lastCell.col].letter != '-':
+                                    return False
+                        else:  # Word is horizontal
+                            if firstCell.col - 1 >= 0:
+                                if board.board[firstCell.row][firstCell.col - 1].letter != '-':
+                                    return False
+                            if lastCell.row + 1 < board.length:
+                                if board.board[lastCell.row][lastCell.col + 1].letter != '-':
+                                    return False
+                        return True
+                    print("Mistake! Your word: '", self.string, "'. All new formed words should be valid", sep="")
+                    return False
+                print("Mistake! Your word: '", self.string, "' should be linked with previous words", sep="")
+                return False
+            print("Mistake! Your word: '", self.string, "' is not connected", sep="")
+            return False
+        print("Mistake! Your word: '", self.string, "' is not in the dictionary", sep="")
         return False
-
+    
+    def isWord(self): # Checks whether the word is in dictionary
+        return self.hash in hashesPlayer[self.dictType].keys() and self.string in hashesPlayer[self.dictType][self.hash]
+    
     def isLinked(self, board):  # Checks whether there are neighbors from old Cells
         firstCell = self.cells[0]
         lastCell = self.cells[len(self.string) - 1]
@@ -212,7 +247,7 @@ class WordOnBoard:
             if self.cells[i].neighborsNum(board) > 2:
                 return True
         return False
-
+        
     def isConnected(self):  # Checks whether cells is a solid strip of letters
         if len(self.string) > 1:
             firstCell = self.cells[0]
@@ -228,6 +263,18 @@ class WordOnBoard:
                     return False
         return True
 
+    def areFormedWordsValid(self, board):  # Checks whether all new formed words are valid
+        if self.getOrientation() == "Horizontal":
+            for cell in self.cells:
+                if not cell.generatedWord(board, "Vertical").isWord():
+                    return False
+            return self.cells[0].generateWord(board, "Horizontal").isWord()
+        else:
+            for cell in self.cells:
+                if not cell.generatedWord(board, "Horizontal").isWord():
+                    return False
+            return self.cells[0].generateWord(board, "Vertical").isWord()
+
     def addLetter(self, cell):
         self.string += cell.letter
         self.hash = hashFunc(self.string)
@@ -237,6 +284,16 @@ class WordOnBoard:
             self.string = self.string[: -1]
             self.hash = hashFunc(self.string)
             self.cells.pop()
+
+    def getOrientation(self):
+        firstCell = self.cells[0]
+        lastCell = self.cells[len(self.string) - 1]
+        rowDif = firstCell.row - lastCell.row
+        colDif = firstCell.col - lastCell.col
+        if rowDif == 0:
+            return "Horizontal"
+        else:
+            return "Vertical"
 
     def getScore(self, board):
         score = 0
@@ -258,7 +315,6 @@ class WordOnBoard:
                 score += lettterMultiplier * scores[cell.letter]
         score *= wordMultiplier
         return score
-
 
 class Bag:
     def __init__(self):
