@@ -101,38 +101,81 @@ class Cell:
         self.letter = letter
         self.isEmpty = False
 
+    def neighborsNum(self, board):
+        boardCopy = [[] for row in range(board.height + 2)]
+        for row in range(board.height + 2):
+            for col in range(board.length + 2):
+                if row == 0 or row == board.height + 1 or col == 0 or col == board.height + 1:
+                    boardCopy[row].append(0)
+                else:
+                    if board[row-1][col-1].letter == '-':
+                        boardCopy[row].append(0)
+                    else:
+                        boardCopy[row].append(1)
+
+        answer = 0
+        for row in range(self.row, self.row + 3):
+            for col in range(self.col, self.col + 3):
+                answer += boardCopy[row][col]
+        return answer
+
 
 class WordOnBoard:
-    def __init__(self, cells): #Cells is a list of Cell objects
+    def __init__(self, cells):  # Cells is a list of Cell objects
         string = ""
         for el in cells:
             string += el.letter
         self.string = string.rstrip()
-        self.dictType = dictPlayer     # Will we need this Class for AI words, if yes, it is necessary to change the type
+        self.isLinked = False
+        self.dictType = dictPlayer    # Will we need this Class for AI words, if yes, it is necessary to change the type
         self.hash = hashFunc(self.string)
         self.cells = cells
 
-    def isWord(self):   #Maybe it's better to rename it (we have the same method in Word class)
-        return self.hash in hashesPlayer[self.dictType].keys() and self.string in hashesPlayer[self.dictType][self.hash]
+    def isValidWord(self, board):
+        if self.hash in hashesPlayer[self.dictType].keys() and self.string in hashesPlayer[self.dictType][self.hash]:
+            if self.isConnected() and self.isLinked:
+                firstCell = self.cells[0]
+                lastCell = self.cells[len(self.string) - 1]
+                rowDif = firstCell.row - lastCell.row
+                colDif = firstCell.col - lastCell.col
+                if colDif == 0:  # Word is vertical
+                    if firstCell.row - 1 >= 0:
+                        if board[firstCell.row - 1][firstCell.col].letter != '-':
+                            return False
+                    if lastCell.row + 1 < board.height:
+                        if board[lastCell.row + 1][lastCell.col].letter != '-':
+                            return False
+                else:   # Word is horizontal
+                    if firstCell.col - 1 >= 0:
+                        if board[firstCell.row][firstCell.col - 1].letter != '-':
+                            return False
+                    if lastCell.row + 1 < board.length:
+                        if board[lastCell.row ][lastCell.col + 1].letter != '-':
+                            return False
+                return True
+        return False
 
-    def isConnected(self):
-        firstCell = self.cells[0]
-        secondCell = self.cells[1]
-        rowDif = firstCell.row - secondCell.row
-        colDif = firstCell.col - secondCell.col
-        answer = True
-        for i in range(1, len(self.cells) - 1):
-            currentCell = self.cells[i]
-            nextCell = self.cells[i + 1]
-            if currentCell.row - nextCell.row != rowDif or currentCell.col - nextCell.col != colDif:
-                answer = False
-                break
-        return answer
+    def isConnected(self):  # Checks whether cells is a solid strip of letters
+        if len(self.string) > 1:
+            firstCell = self.cells[0]
+            secondCell = self.cells[1]
+            rowDif = firstCell.row - secondCell.row
+            colDif = firstCell.col - secondCell.col
+            if abs(rowDif) + abs(colDif) > 1:
+                return False
+            for i in range(1, len(self.cells) - 1):
+                currentCell = self.cells[i]
+                nextCell = self.cells[i + 1]
+                if currentCell.row - nextCell.row != rowDif or currentCell.col - nextCell.col != colDif:
+                    return False
+        return True
 
-    def addLetter(self, cell):
+    def addLetter(self, cell, isNewCell):
+        if not isNewCell:
+            self.isLinked = True
         self.string += cell.letter
         self.cells.append(cell)
-        if not self.isConnected() or not self.isWord():  # Should I throw an Exception here?
+        if not self.isConnected():  # Should I throw an Exception here?
             self.string -= cell.letter
             self.cells.pop()
 
@@ -198,7 +241,7 @@ class Board:
                 self.board[row].append(Cell(row, col))
 
     def addWord(self, word):
-        if word.isWord() and word.isConnected():
+        if word.isValidWord():
             rowBegin = word.cells[0].row
             rowEnd = word.cells[len(word.cells) - 1].row
             colBegin = word.cells[0].col
@@ -214,6 +257,8 @@ class Board:
                 for letter in word.string:
                     self.board[rowBegin + counter][colBegin].setLetter(letter)
                     counter += 1
+        else:  # Should i throw an exception here?
+            pass
 
     def printBoard(self):
         for row in range(self.height):

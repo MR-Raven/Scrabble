@@ -26,6 +26,5 @@ def turnPriority(self):
 
 gameBag = Bag()
 gameBoard = Board(15, 15)
-allWords = []
-priority = turnPriority() # Priority is a string ("AI" or "Player")
+priority = turnPriority()  # Priority is a string ("AI" or "Player")
 
