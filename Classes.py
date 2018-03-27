@@ -150,6 +150,7 @@ class Cell:
         self.letter = letter
         self.isEmpty = False
 
+
 class WordOnBoard:
     def __init__(self, cells): #Cells is a list of Cell objects
         string = ""
@@ -184,23 +185,23 @@ class WordOnBoard:
             self.string -= cell.letter
             self.cells.pop()
 
-    def getScore(self):
+    def getScore(self, board):
         score = 0
         wordMultiplier = 1
         for cell in self.cells:
             lettterMultiplier = 1
-            if bonuses[cell.row][cell.col] == "3W":
+            if board.bonuses[cell.row][cell.col] == "3W":
                 wordMultiplier *= 3
-                bonuses[cell.row][cell.col] = "00"
-            elif bonuses[cell.row][cell.col] == "2W":
+                board.bonuses[cell.row][cell.col] = "00"
+            elif board.bonuses[cell.row][cell.col] == "2W":
                 wordMultiplier *= 2
-                bonuses[cell.row][cell.col] = "00"
-            elif bonuses[cell.row][cell.col] == "3L":
+                board.bonuses[cell.row][cell.col] = "00"
+            elif board.bonuses[cell.row][cell.col] == "3L":
                 lettterMultiplier = 3
-                bonuses[cell.row][cell.col] = "00"
-            elif bonuses[cell.row][cell.col] == "2L":
+                board.bonuses[cell.row][cell.col] = "00"
+            elif board.bonuses[cell.row][cell.col] == "2L":
                 lettterMultiplier = 2
-                bonuses[cell.row][cell.col] = "00"
+                board.bonuses[cell.row][cell.col] = "00"
                 score += lettterMultiplier * scores[cell.letter]
         score *= wordMultiplier
         return score
@@ -235,10 +236,10 @@ class Bag:
         self.removeLetter(prevLetter)
         return prevLetter
 
-
 class Board:
     def __init__(self, boardLength, boardHeight):
         self.board = [[] for x in range(boardHeight)]
+        self.bonuses = bonuses
         self.length = boardLength
         self.height = boardHeight
         for row in range(boardHeight):
