@@ -176,14 +176,14 @@ class WordOnBoard:
         for el in cells:
             string += el.letter
         self.string = string.rstrip()
-        self.isLinked = False
         self.dictType = dictPlayer    # Will we need this Class for AI words, if yes, it is necessary to change the type
         self.hash = hashFunc(self.string)
         self.cells = cells
+        self.IsLinked = False           # !!!! IF YOU NEED TO TEST SET THIS FIELD AS TRUE !!!!!!!!
 
     def isValidWord(self, board):
         if self.hash in hashesPlayer[self.dictType].keys() and self.string in hashesPlayer[self.dictType][self.hash]:
-            if self.isConnected() and self.isLinked:
+            if self.isConnected() and (self.isLinked(board) or self.IsLinked):
                 firstCell = self.cells[0]
                 lastCell = self.cells[len(self.string) - 1]
                 rowDif = firstCell.row - lastCell.row
@@ -205,6 +205,16 @@ class WordOnBoard:
                 return True
         return False
 
+    def isLinked(self, board):
+        firstCell = self.cells[0]
+        lastCell = self.cells[len(self.string) - 1]
+        if firstCell.neighborsNum(board) > 1 or lastCell.neighborsNum(board) > 1:
+            return True
+        for i in range(1, len(self.string) - 1):
+            if self.cells[i].neighborsNum(board) > 2:
+                return True
+        return False
+
     def isConnected(self):  # Checks whether cells is a solid strip of letters
         if len(self.string) > 1:
             firstCell = self.cells[0]
@@ -220,19 +230,15 @@ class WordOnBoard:
                     return False
         return True
 
-    def addLetter(self, cell, isNewCell):
-        prevIsLinked = self.isLinked
+    def addLetter(self, cell):
         self.string += cell.letter
         self.hash = hashFunc(self.string)
         self.cells.append(cell)
-        if not isNewCell:
-            self.isLinked = True
         if not self.isConnected():  # Should I throw an Exception here?
             print("Mistake! You can't add the letter '", cell.letter, "', a word should be connected", sep="")
             self.string = self.string[: -1]
             self.hash = hashFunc(self.string)
             self.cells.pop()
-            self.isLinked = prevIsLinked
 
     def getScore(self, board):
         score = 0
