@@ -1,5 +1,6 @@
 from hashing import hashFunc
 from itertools import permutations
+from config import scores, bonuses, hashesAI
 
 # NESSESARY?
 class Alphabet:
@@ -129,6 +130,35 @@ class WordOnBoard:
                 answer = False
                 break
         return answer
+
+    def addLetter(self, cell):
+        self.string += cell.letter
+        self.cells.append(cell)
+        if not self.isConnected() or not self.isWord():
+            self.string -= cell.letter
+            self.cells.pop()
+
+    def getScore(self):
+        score = 0
+        wordMultiplier = 1
+        for cell in self.cells:
+            lettterMultiplier = 1
+            if bonuses[cell.row][cell.col] == "3W":
+                wordMultiplier *= 3
+                bonuses[cell.row][cell.col] = "00"
+            elif bonuses[cell.row][cell.col] == "2W":
+                wordMultiplier *= 2
+                bonuses[cell.row][cell.col] = "00"
+            elif bonuses[cell.row][cell.col] == "3L":
+                lettterMultiplier = 3
+                bonuses[cell.row][cell.col] = "00"
+            elif bonuses[cell.row][cell.col] == "2L":
+                lettterMultiplier = 2
+                bonuses[cell.row][cell.col] = "00"
+                score += lettterMultiplier * scores[cell.letter]
+        score *= wordMultiplier
+        return score
+
 
 class Bag:
     def __init__(self):
