@@ -157,15 +157,13 @@ class Cell:
                 if row == 0 or row == board.height + 1 or col == 0 or col == board.height + 1:
                     boardCopy[row].append(0)
                 else:
-                    if board[row-1][col-1].letter == '-':
+                    if board.board[row-1][col-1].letter == '-':
                         boardCopy[row].append(0)
                     else:
                         boardCopy[row].append(1)
 
-        answer = 0
-        for row in range(self.row, self.row + 3):
-            for col in range(self.col, self.col + 3):
-                answer += boardCopy[row][col]
+        answer = boardCopy[self.row][self.col + 1] + boardCopy[self.row + 1][self.col]
+        answer += boardCopy[self.row + 1][self.col + 2] + boardCopy[self.row + 2][self.col + 1]
         return answer
 
 
@@ -189,17 +187,17 @@ class WordOnBoard:
                 colDif = firstCell.col - lastCell.col
                 if colDif == 0:  # Word is vertical
                     if firstCell.row - 1 >= 0:
-                        if board[firstCell.row - 1][firstCell.col].letter != '-':
+                        if board.board[firstCell.row - 1][firstCell.col].letter != '-':
                             return False
                     if lastCell.row + 1 < board.height:
-                        if board[lastCell.row + 1][lastCell.col].letter != '-':
+                        if board.board[lastCell.row + 1][lastCell.col].letter != '-':
                             return False
                 else:   # Word is horizontal
                     if firstCell.col - 1 >= 0:
-                        if board[firstCell.row][firstCell.col - 1].letter != '-':
+                        if board.board[firstCell.row][firstCell.col - 1].letter != '-':
                             return False
                     if lastCell.row + 1 < board.length:
-                        if board[lastCell.row ][lastCell.col + 1].letter != '-':
+                        if board.board[lastCell.row][lastCell.col + 1].letter != '-':
                             return False
                 return True
         return False
@@ -290,7 +288,7 @@ class Board:
                 self.board[row].append(Cell(row, col))
 
     def addWord(self, word):
-        if word.isValidWord(self.board):
+        if word.isValidWord(self):
             rowBegin = word.cells[0].row
             rowEnd = word.cells[len(word.cells) - 1].row
             colBegin = word.cells[0].col
@@ -338,7 +336,7 @@ def WordOnBoardConstructor(word, rowBegin, colBegin, orientation): #Word is a st
     return word
 
 
-
+"""
 myBoard = Board(15, 15)
 c1 = Cell(5, 6)
 c2 = Cell(6, 6)
@@ -363,3 +361,4 @@ myBoard.printBoard()
 
 b = WordAI("huma")
 b.allPossibleWords(myBoard)
+"""

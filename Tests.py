@@ -1,40 +1,16 @@
 from Classes import *
-# CELL TESTS
-cells = []
-for row in range(5):
-    cells.append(Cell(row, 0))
-cells[0].setLetter('a')
-cells[1].setLetter('p')
-cells[2].setLetter('p')
-cells[3].setLetter('l')
-cells[4].setLetter('e')
 
+def testNeighborsNum(board):
+    print(myBoard.board[7][10].neighborsNum(board))
 
-
-#WordOnBoard TESTS
-firstWord = WordOnBoard(cells)
-
-
-#BAG TESTS
-myBag = Bag()
-myBag.removeLetter('z')
-
-for letter in myBag.bag:
-    print(letter, myBag.bag[letter], sep="-", end=" ")
-print()
-
-# BOARD TESTS
 myBoard = Board(15, 15)
-c1 = Cell(5, 6)
-c2 = Cell(5, 7)
-c3 = Cell(5, 8)
-c4 = Cell(5, 9)
-c1.setLetter('n')
-c2.setLetter('o')
-c3.setLetter('s')
-c4.setLetter('e')
-
-
-a = WordOnBoard([c1, c2, c3, c4])
-myBoard.addWord(a)
+myBag = Bag()
+word1 = WordOnBoardConstructor("apple", 7, 7, 'h')
+word2 = WordOnBoardConstructor("like", 7, 10, 'v')
+word1.isLinked = True
+word2.isLinked = True
+myBoard.addWord(word1)
+myBoard.addWord(word2)
 myBoard.printBoard()
+testNeighborsNum(myBoard)
+
