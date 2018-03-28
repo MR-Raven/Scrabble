@@ -40,8 +40,8 @@ hashesPlayer = dict()
 for dict in dictionaries:
     hashesAI[dict] = hashTabling(dict)
     hashesPlayer[dict] = hashTabling(dict)
-dictAI = "Big"
-dictPlayer = "Large"
+dictAI = "Small"
+dictPlayer = "Small"
 bonuses = setBonuses()
 scores = {' ': 0, 'a': 1, 'b': 2, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2,
               'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1,
