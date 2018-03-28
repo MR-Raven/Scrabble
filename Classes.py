@@ -142,14 +142,6 @@ class Cell:
         self.row = row
         self.col = col
         self.letter = letter
-        if letter == '-':
-            self.isEmpty = True
-        else:
-            self.isEmpty = False
-
-    def setLetter(self, letter):
-        self.letter = letter
-        self.isEmpty = False
 
     def generateWord(self, board, orientation): # Returns a word, that contains this cell
         if orientation == "Horizontal":             # Orientation is a string ("Horizontal" or "Vertical")
@@ -176,6 +168,9 @@ class Cell:
                 cells.append(board.board[row][self.col])
         return WordOnBoard(cells)
 
+    def isEmpty(self):
+        return self.letter == '-'
+
     def neighborsNum(self, board):
         boardCopy = [[] for row in range(board.height + 2)]
         for row in range(board.height + 2):
@@ -183,7 +178,7 @@ class Cell:
                 if row == 0 or row == board.height + 1 or col == 0 or col == board.height + 1:
                     boardCopy[row].append(0)
                 else:
-                    if board.board[row-1][col-1].letter == '-':
+                    if board.board[row-1][col-1].isEmpty():
                         boardCopy[row].append(0)
                     else:
                         boardCopy[row].append(1)
@@ -212,17 +207,17 @@ class WordOnBoard:
                         lastCell = self.cells[len(self.string) - 1]
                         if self.getOrientation() == "Vertical":  # Word is vertical
                             if firstCell.row - 1 >= 0:
-                                if board.board[firstCell.row - 1][firstCell.col].letter != '-':
+                                if not board.board[firstCell.row - 1][firstCell.col].isEmpty():
                                     return False
                             if lastCell.row + 1 < board.height:
-                                if board.board[lastCell.row + 1][lastCell.col].letter != '-':
+                                if not board.board[lastCell.row + 1][lastCell.col].letter.isEmpty():
                                     return False
                         else:  # Word is horizontal
                             if firstCell.col - 1 >= 0:
-                                if board.board[firstCell.row][firstCell.col - 1].letter != '-':
+                                if not board.board[firstCell.row][firstCell.col - 1].letter.isEmpty():
                                     return False
                             if lastCell.row + 1 < board.length:
-                                if board.board[lastCell.row][lastCell.col + 1].letter != '-':
+                                if not board.board[lastCell.row][lastCell.col + 1].letter.isEmpty():
                                     return False
                         return True
                     print("Mistake! Your word: '", self.string, "'. All new formed words should be valid", sep="")
@@ -265,12 +260,12 @@ class WordOnBoard:
     def areFormedWordsValid(self, board):  # Checks whether all new formed words are valid
         if self.getOrientation() == "Horizontal":
             for cell in self.cells:
-                if not cell.generateWord(board, "Vertical").isWord():
+                if not cell.generateWord(board, "Vertical").isWord() and len(cell.generateWord(board, "Vertical")) > 1:
                     return False
             return self.cells[0].generateWord(board, "Horizontal").isWord()
         else:
             for cell in self.cells:
-                if not cell.generateWord(board, "Horizontal").isWord():
+                if not cell.generateWord(board, "Horizontal").isWord() and len(cell.generateWord(board, "Horizontal")) > 1:
                     return False
             return self.cells[0].generateWord(board, "Vertical").isWord()
 
@@ -296,23 +291,20 @@ class WordOnBoard:
 
     def getScore(self, board):
         score = 0
-        wordMultiplier = 1
-        for cell in self.cells:
-            lettterMultiplier = 1
-            if board.bonuses[cell.row][cell.col] == "3W":
-                wordMultiplier *= 3
-                board.bonuses[cell.row][cell.col] = "00"
-            elif board.bonuses[cell.row][cell.col] == "2W":
-                wordMultiplier *= 2
-                board.bonuses[cell.row][cell.col] = "00"
-            elif board.bonuses[cell.row][cell.col] == "3L":
-                lettterMultiplier = 3
-                board.bonuses[cell.row][cell.col] = "00"
-            elif board.bonuses[cell.row][cell.col] == "2L":
-                lettterMultiplier = 2
-                board.bonuses[cell.row][cell.col] = "00"
-                score += lettterMultiplier * scores[cell.letter]
-        score *= wordMultiplier
+        if self.isWord():     # In fact it is enough to check that len(self.string) > 1
+            wordMultiplier = 1
+            for cell in self.cells:
+                lettterMultiplier = 1
+                if board.bonuses[cell.row][cell.col] == "3W":
+                    wordMultiplier *= 3
+                    board.bonuses[cell.row][cell.col] = "00"
+                    wordMultiplier *= 2
+                elif board.bonuses[cell.row][cell.col] == "3L":
+                    lettterMultiplier = 3
+                elif board.bonuses[cell.row][cell.col] == "2L":
+                    lettterMultiplier = 2
+                    score += lettterMultiplier * scores[cell.letter]
+            score *= wordMultiplier
         return score
 
 class Bag:
@@ -357,6 +349,7 @@ class Board:
 
     def addWord(self, word):
         if word.isValidWord(self):
+            from gameData import gameScore
             rowBegin = word.cells[0].row
             rowEnd = word.cells[len(word.cells) - 1].row
             colBegin = word.cells[0].col
@@ -364,16 +357,22 @@ class Board:
             if rowBegin == rowEnd:  # "Horizontal orientation"
                 counter = 0
                 for letter in word.string:
-                    self.board[rowBegin][colBegin + counter].setLetter(letter)
+                    self.board[rowBegin][colBegin + counter].letter = letter
                     counter += 1
 
             elif colBegin == colEnd:  # Vertical orientation
                 counter = 0
                 for letter in word.string:
-                    self.board[rowBegin + counter][colBegin].setLetter(letter)
+                    self.board[rowBegin + counter][colBegin].letter = letter
                     counter += 1
+            gameScore.updateScore(word)
+            self.updateBonuses(word)
         else:  # Should i throw an exception here?
             pass
+
+    def updateBonuses(self, newWord):
+        for cell in word.cells:
+            self.bonuses[cell.row][cell.col] = "00"
 
     def printBoard(self):
         for row in range(self.height):
@@ -391,7 +390,7 @@ def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  #Word is a s
         for i in range(colBegin, colEnd + 1):
             currentLetter = word[i-colBegin]
             wordCells.append(Cell(rowBegin, i))
-            wordCells[i-colBegin].setLetter(currentLetter)
+            wordCells[i-colBegin].letter(currentLetter)
 
     elif orientation == 'v':
         colEnd = colBegin
@@ -399,7 +398,7 @@ def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  #Word is a s
         for i in range(rowBegin, rowEnd + 1):
             currentLetter = word[i-rowBegin]
             wordCells.append(Cell(i, colBegin))
-            wordCells[i-rowBegin].setLetter(currentLetter)
+            wordCells[i-rowBegin].letter(currentLetter)
 
     word = WordOnBoard(wordCells)
     return word
