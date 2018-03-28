@@ -1,7 +1,6 @@
 from hashing import hashFunc
 from itertools import permutations
 from config import *
-
 # NESSESARY?
 class Alphabet:
     alphabetSize = 26
@@ -367,7 +366,7 @@ class Board:
                 for letter in word.string:
                     self.board[rowBegin + counter][colBegin].letter = letter
                     counter += 1
-            score.updateScore(word)
+            score.updateScore(self, word)
             self.updateBonuses(word)
         else:  # Should i throw an exception here?
             pass
@@ -461,7 +460,7 @@ def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  #Word is a s
 
 myBoard = Board(15, 15)
 word = WordOnBoardConstructor("nose", 6, 6, 'v')
-myBoard.addWord(word)
+myBoard.addWord(word, Scoring())
 myBoard.printBoard()
 slovo = WordAI("huma")
 slovo.allPossibleWords(myBoard)
