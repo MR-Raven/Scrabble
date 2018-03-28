@@ -236,12 +236,8 @@ class WordOnBoard:
         return self.hash in hashesPlayer[self.dictType].keys() and self.string in hashesPlayer[self.dictType][self.hash]
 
     def isLinked(self, board):  # Checks whether there are neighbors from old Cells
-        firstCell = self.cells[0]
-        lastCell = self.cells[len(self.string) - 1]
-        if firstCell.neighborsNum(board) > 1 or lastCell.neighborsNum(board) > 1:
-            return True
-        for i in range(1, len(self.string) - 1):
-            if self.cells[i].neighborsNum(board) > 2:
+        for i in range(0, len(self.string)):
+            if self.cells[i].neighborsNum(board) > 0:
                 return True
         return False
 
@@ -373,6 +369,7 @@ class Board:
                     counter += 1
             global myScore
             myScore.updateScore(self, word)
+            myScore.finishTurn()
             self.updateBonuses(word)
         else:  # Should i throw an exception here?
             pass
@@ -420,7 +417,6 @@ class Scoring:
                     currentWord = cell.generateWord(board, "Horizontal")
                     self.scoreAI += currentWord.getScore(board)
             self.scoreAI += newWord.getScore(board)
-            self.priority = "Player"
 
         elif self.priority == "Player":
             if newWord.getOrientation() == "Horizontal":
@@ -432,7 +428,16 @@ class Scoring:
                     currentWord = cell.generateWord(board, "Horizontal")
                     self.scorePlayer += currentWord.getScore(board)
             self.scorePlayer += newWord.getScore(board)
+        else:
+            print("Mistake in priority!")
+
+    def finishTurn(self):
+        if self.priority == "Player":
             self.priority = "AI"
+        elif self.priority == "AI":
+            self.priority = "Player"
+        else:
+            print("Mistake in priority!")
 
     def turnPriority(self):
         from random import randint
@@ -469,7 +474,8 @@ def WordOnBoardConstructor(word, rowBegin, colBegin,
 myBoard = Board(15, 15)
 myScore = Scoring()
 word = WordOnBoardConstructor("nose", 6, 6, 'v')
+word1 = WordOnBoardConstructor("lion", 6, 3, "h")
 myBoard.addWord(word)
+print(word1.isLinked(myBoard))
 myBoard.printBoard()
 slovo = WordAI("huma")
-slovo.allPossibleWords(myBoard)
