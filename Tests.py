@@ -1,5 +1,5 @@
 from Classes import *
-
+print(hashFunc("appl"))
 myBoard = Board(15, 15)
 myBag = Bag()
 word1 = WordOnBoardConstructor("appl", 0, 0, 'h')
