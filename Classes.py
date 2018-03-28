@@ -349,7 +349,8 @@ class Board:
             for col in range(boardLength):
                 self.board[row].append(Cell(row, col))
 
-    def addWord(self, word, score):
+    def addWord(self, word):  # Latter it is necessary to add Scoring object as a parametr
+        from gameData import gameScore
         if word.isValidWord(self):
             rowBegin = word.cells[0].row
             rowEnd = word.cells[len(word.cells) - 1].row
