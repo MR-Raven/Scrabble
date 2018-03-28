@@ -96,7 +96,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
         for j in range(playBoard.length):
             for i in range(playBoard.height - 1, -1, -1):
                 maxLetters = min(len(self.string), emptyData[i][j][1])  # Hand size irl ()
-                for curLen in range(1, maxLetters + 1):
+                for curLen in range(2, maxLetters + 1):
                     currentEmptiness = 0
                     temp = 0
                     stakedLetters = []
@@ -131,14 +131,14 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         curWord = WordAI(curString)
                         cellData = []
                         for curPos in range(len(curWord.string)):
-                            cellData.append(Cell(i, curPos + j, curWord.string[curPos]))
+                            cellData.append(Cell(i + curPos, j, curWord.string[curPos]))
                         if curWord.isWord() and curWord.isLinked(playBoard, cellData):
                             subWordsData.add(curWord.string)
                     for elem in subWordsData:
                         wordsAndCoordsV.add((elem, (i, j)))
                         wordsOnlyV.add(elem)
         print('V')
-        print(wordsOnlyV)
+        print(wordsAndCoordsH)
 
 
 class Cell:
@@ -478,7 +478,7 @@ myBoard = Board(15, 15)
 myScore = Scoring()
 word = WordOnBoardConstructor("nose", 6, 6, 'v')
 myBoard.addWord(word)
-###
+'''
 word1 = WordOnBoardConstructor("lion", 6, 3, "h")
 print(word.getScore(myBoard))
 myBoard.addWord(word)
@@ -490,6 +490,6 @@ myBoard.addWord(word2)
 ###
 myBoard.printBoard()
 print(myScore.scoreAI, myScore.scorePlayer)
-
+'''
 slovo = WordAI("huma")
 slovo.allPossibleWords(myBoard)
