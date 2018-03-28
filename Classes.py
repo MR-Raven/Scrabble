@@ -338,7 +338,7 @@ class Board:
             for col in range(boardLength):
                 self.board[row].append(Cell(row, col))
 
-    def addWord(self, word):  # Latter it is necessary to add Scoring object as a parametr
+    def addWord(self, word):  # Latter it is necessary to add Scoring object as a parameter
         from gameData import gameScore
         if word.isValidWord(self):
             rowBegin = word.cells[0].row
@@ -356,7 +356,7 @@ class Board:
                 for letter in word.string:
                     self.board[rowBegin + counter][colBegin].letter = letter
                     counter += 1
-            score.updateScore(word)
+            gameScore.updateScore(self, word)
             self.updateBonuses(word)
         else:  # Should i throw an exception here?
             pass
@@ -398,24 +398,24 @@ class Scoring:
             if newWord.getOrientation() == "Horizontal":
                 for cell in newWord.cells:
                     currentWord = cell.generateWord(board, "Vertical")
-                    self.scoreAI += currentWord.getScore()
+                    self.scoreAI += currentWord.getScore(board)
             else:
                 for cell in newWord.cells:
                     currentWord = cell.generateWord(board, "Horizontal")
-                    self.scoreAI += currentWord.getScore()
-            self.scoreAI += newWord.getScore()
+                    self.scoreAI += currentWord.getScore(board)
+            self.scoreAI += newWord.getScore(board)
             self.priority = "Player"
 
         elif self.priority == "Player":
             if newWord.getOrientation() == "Horizontal":
                 for cell in newWord.cells:
                     currentWord = cell.generateWord(board, "Vertical")
-                    self.scorePlayer += currentWord.getScore()
+                    self.scorePlayer += currentWord.getScore(board)
             else:
                 for cell in newWord.cells:
                     currentWord = cell.generateWord(board, "Horizontal")
-                    self.scorePlayer += currentWord.getScore()
-            self.scorePlayer += newWord.getScore()
+                    self.scorePlayer += currentWord.getScore(board)
+            self.scorePlayer += newWord.getScore(board)
             self.priority = "AI"
 
     def turnPriority(self):
