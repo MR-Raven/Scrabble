@@ -218,7 +218,7 @@ class WordOnBoard:
                                 if not board.board[firstCell.row][firstCell.col - 1].isEmpty():
                                     return False
                             if lastCell.row + 1 < board.length:
-                                if not board.board[lastCell.row][lastCell.col + 1].letter.isEmpty():
+                                if not board.board[lastCell.row][lastCell.col + 1].isEmpty():
                                     return False
                         return True
                     print("Mistake! Your word: '", self.string, "'. All new formed words should be valid", sep="")
@@ -308,6 +308,7 @@ class WordOnBoard:
             score *= wordMultiplier
         return score
 
+
 class Bag:
     def __init__(self):
         self.bag = {' ': 2, 'a': 9, 'b': 2, 'c': 2, 'd': 4, 'e': 12, 'f': 2, 'g': 3,
@@ -338,6 +339,7 @@ class Bag:
         self.removeLetter(prevLetter)
         return prevLetter
 
+
 class Board:
     def __init__(self, boardLength, boardHeight):
         self.board = [[] for x in range(boardHeight)]
@@ -348,9 +350,8 @@ class Board:
             for col in range(boardLength):
                 self.board[row].append(Cell(row, col))
 
-    def addWord(self, word):
+    def addWord(self, word, score):
         if word.isValidWord(self):
-            from gameData import gameScore
             rowBegin = word.cells[0].row
             rowEnd = word.cells[len(word.cells) - 1].row
             colBegin = word.cells[0].col
@@ -366,7 +367,7 @@ class Board:
                 for letter in word.string:
                     self.board[rowBegin + counter][colBegin].letter = letter
                     counter += 1
-            gameScore.updateScore(word)
+            score.updateScore(word)
             self.updateBonuses(word)
         else:  # Should i throw an exception here?
             pass
@@ -395,6 +396,46 @@ class Board:
                 curEmpty += self.board[j][i].isEmpty()
                 emptyData[j][i][1] = curEmpty
         return emptyData
+
+
+class Scoring:
+    def __init__(self):
+        self.scoreAI = 0
+        self.scorePlayer = 0
+        self.priority = self.turnPriority()
+
+    def updateScore(self, board, newWord):
+        if self.priority == "AI":
+            if newWord.getOrientation() == "Horizontal":
+                for cell in newWord.cells:
+                    currentWord = cell.generateWord(board, "Vertical")
+                    self.scoreAI += currentWord.getScore()
+            else:
+                for cell in newWord.cells:
+                    currentWord = cell.generateWord(board, "Horizontal")
+                    self.scoreAI += currentWord.getScore()
+            self.scoreAI += newWord.getScore()
+            self.priority = "Player"
+
+        elif self.priority == "Player":
+            if newWord.getOrientation() == "Horizontal":
+                for cell in newWord.cells:
+                    currentWord = cell.generateWord(board, "Vertical")
+                    self.scorePlayer += currentWord.getScore()
+            else:
+                for cell in newWord.cells:
+                    currentWord = cell.generateWord(board, "Horizontal")
+                    self.scorePlayer += currentWord.getScore()
+            self.scorePlayer += newWord.getScore()
+            self.priority = "AI"
+
+    def turnPriority(self):
+        from random import randint
+        x = randint(0, 1)
+        if x == 0:
+            return "Player"
+        else:
+            return "AI"
 
 
 def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  #Word is a string, rowBegin and colBegin are numbers, orientation is a char ('h' or 'v')
