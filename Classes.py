@@ -1,14 +1,16 @@
 from hashing import hashFunc
 from itertools import permutations
 from config import *
+
+
 # NESSESARY?
 class Alphabet:
     alphabetSize = 26
     letters = [chr(ord('a') + i) for i in range(26)]
 
 
-class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S ALSO COUNTING THIS WAY HERE AND IN SORTING !!!
-    def __init__(self, string): # Is local copy of type really nessesary?
+class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S ALSO COUNTING THIS WAY HERE AND IN SORTING !!!
+    def __init__(self, string):  # Is local copy of type really nessesary?
         self.string = string.rstrip()
         self.dictType = dictAI
         self.hash = hashFunc(self.string)
@@ -26,16 +28,12 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
                     curString += letter
                 curWord = WordAI(curString, self.dictType)
                 if curWord.isWord():
-                    subWordsData.add(curWord.string) # STRING JUST TO TEST
+                    subWordsData.add(curWord.string)  # STRING JUST TO TEST
         return subWordsData
 
     def isLinked(self, board, cellsData):  # Checks whether there are neighbors from old Cells
-        firstCell = cellsData[0]
-        lastCell = cellsData[len(self.string) - 1]
-        if firstCell.neighborsNum(board) > 1 or lastCell.neighborsNum(board) > 1:
-            return True
-        for i in range(1, len(self.string) - 1):
-            if cellsData[i].neighborsNum(board) > 2:
+        for i in range(0, len(self.string)):
+            if cellsData[i].neighborsNum(board) > 0:
                 return True
         return False
 
@@ -46,30 +44,31 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
         wordsOnlyH = set()
         for i in range(playBoard.height):
             for j in range(playBoard.length - 1, -1, -1):
-                maxLetters = min(len(self.string), emptyData[i][j][0]) # Hand size irl ()
+                maxLetters = min(len(self.string), emptyData[i][j][0])  # Hand size irl ()
                 for curLen in range(1, maxLetters + 1):
                     currentEmptiness = 0
                     temp = 0
                     stakedLetters = []
                     prevData = []
                     for k in range(j - 1, -1, -1):
-                        if playBoard.board[i][k].isEmpty:
+                        if playBoard.board[i][k].isEmpty():
                             break
                         else:
                             prevData.insert(0, playBoard.board[i][k].letter)
                     for k in range(len(prevData)):
                         stakedLetters.append((k, prevData[k]))
                     while currentEmptiness != maxLetters:
-                        if playBoard.board[i][j + temp].isEmpty:
+                        if playBoard.board[i][j + temp].isEmpty():
                             currentEmptiness += 1
                         else:
                             stakedLetters.append((temp + len(prevData), playBoard.board[i][j + temp].letter))
                         temp += 1
                     for k in range(j + temp, playBoard.length):
-                        if playBoard.board[i][k].isEmpty:
+                        if playBoard.board[i][k].isEmpty():
                             break
                         else:
                             stakedLetters.append((temp + k + len(prevData), playBoard.board[i][k].letter))
+
                     subWordsData = set()
                     for psiWord in permutations(self.string, curLen):
                         curString = ""
@@ -78,44 +77,45 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
                             psiWord.insert(stakedLetters[inserts][0], stakedLetters[inserts][1])
                         for letter in psiWord:
                             curString += letter
-                        curWord = WordAI(curString)  # Here in the arguments was self.datatype, I deleted it, because I moved all dictTypes to config
+                        curWord = WordAI(
+                            curString)  # Here in the arguments was self.datatype, I deleted it, because I moved all dictTypes to config
                         cellData = []
-                        for curPos in range(len(self.string) + 1):
-                            cellData.append(Cell(i, curPos + j, self.string[curPos]))
+                        for curPos in range(len(curWord.string)):
+                            cellData.append(Cell(i, curPos + j, curWord.string[curPos]))
                         if curWord.isWord() and curWord.isLinked(playBoard, cellData):
                             subWordsData.add(curWord.string)  # STRING JUST TO TEST
                     for elem in subWordsData:
                         wordsAndCoordsH.add((elem, (i, j)))
                         wordsOnlyH.add(elem)
         print('H')
-        print(wordsOnlyH)
+        print(wordsAndCoordsH)
 
         ### Vertical (comments like previous)
         wordsAndCoordsV = set()
         wordsOnlyV = set()
         for j in range(playBoard.length):
             for i in range(playBoard.height - 1, -1, -1):
-                maxLetters = min(len(self.string), emptyData[i][j][1]) # Hand size irl ()
+                maxLetters = min(len(self.string), emptyData[i][j][1])  # Hand size irl ()
                 for curLen in range(1, maxLetters + 1):
                     currentEmptiness = 0
                     temp = 0
                     stakedLetters = []
                     prevData = []
                     for k in range(i - 1, -1, -1):
-                        if playBoard.board[k][j].isEmpty:
+                        if playBoard.board[k][j].isEmpty():
                             break
                         else:
                             prevData.insert(0, playBoard.board[k][j].letter)
                     for k in range(len(prevData)):
                         stakedLetters.append((k, prevData[k]))
                     while currentEmptiness != maxLetters:
-                        if playBoard.board[i + temp][j].isEmpty:
+                        if playBoard.board[i + temp][j].isEmpty():
                             currentEmptiness += 1
                         else:
                             stakedLetters.append((temp + len(prevData), playBoard.board[i + temp][j].letter))
                         temp += 1
                     for k in range(i + temp, playBoard.height):
-                        if playBoard.board[i][k].isEmpty:
+                        if playBoard.board[i][k].isEmpty():
                             break
                         else:
                             stakedLetters.append((temp + k + len(prevData), playBoard.board[k][j].letter))
@@ -129,7 +129,10 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
                         for letter in psiWord:
                             curString += letter
                         curWord = WordAI(curString)
-                        if curWord.isWord():
+                        cellData = []
+                        for curPos in range(len(curWord.string)):
+                            cellData.append(Cell(i, curPos + j, curWord.string[curPos]))
+                        if curWord.isWord() and curWord.isLinked(playBoard, cellData):
                             subWordsData.add(curWord.string)
                     for elem in subWordsData:
                         wordsAndCoordsV.add((elem, (i, j)))
@@ -137,14 +140,15 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
         print('V')
         print(wordsOnlyV)
 
+
 class Cell:
     def __init__(self, row, col, letter='-'):
         self.row = row
         self.col = col
         self.letter = letter
 
-    def generateWord(self, board, orientation): # Returns a word, that contains this cell, it may be just one cell
-        if orientation == "Horizontal":             # Orientation is a string ("Horizontal" or "Vertical")
+    def generateWord(self, board, orientation):  # Returns a word, that contains this cell, it may be just one cell
+        if orientation == "Horizontal":  # Orientation is a string ("Horizontal" or "Vertical")
             leftCol = self.col
             while leftCol >= 0 and board.board[self.row][leftCol] != '-':
                 leftCol -= 1
@@ -178,7 +182,7 @@ class Cell:
                 if row == 0 or row == board.height + 1 or col == 0 or col == board.height + 1:
                     boardCopy[row].append(0)
                 else:
-                    if board.board[row-1][col-1].isEmpty():
+                    if board.board[row - 1][col - 1].isEmpty():
                         boardCopy[row].append(0)
                     else:
                         boardCopy[row].append(1)
@@ -194,7 +198,7 @@ class WordOnBoard:
         for el in cells:
             string += el.letter
         self.string = string.rstrip()
-        self.dictType = dictPlayer    # Will we need this Class for AI words, if yes, it is necessary to change the type
+        self.dictType = dictPlayer  # Will we need this Class for AI words, if yes, it is necessary to change the type
         self.hash = hashFunc(self.string)
         self.cells = cells
 
@@ -228,16 +232,20 @@ class WordOnBoard:
             return False
         print("Mistake! Your word: '", self.string, "' is not in the dictionary", sep="")
         return False
-    
-    def isWord(self): # Checks whether the word is in dictionary
+
+    def isWord(self):  # Checks whether the word is in dictionary
         return self.hash in hashesPlayer[self.dictType].keys() and self.string in hashesPlayer[self.dictType][self.hash]
-    
+
     def isLinked(self, board):  # Checks whether there are neighbors from old Cells
-        for i in range(0, len(self.string)):
-            if self.cells[i].neighborsNum(board) > 0:
+        firstCell = self.cells[0]
+        lastCell = self.cells[len(self.string) - 1]
+        if firstCell.neighborsNum(board) > 1 or lastCell.neighborsNum(board) > 1:
+            return True
+        for i in range(1, len(self.string) - 1):
+            if self.cells[i].neighborsNum(board) > 2:
                 return True
         return False
-        
+
     def isConnected(self):  # Checks whether cells is a solid strip of letters
         if len(self.string) > 1:
             firstCell = self.cells[0]
@@ -256,12 +264,14 @@ class WordOnBoard:
     def areFormedWordsValid(self, board):  # Checks whether all new formed words are valid
         if self.getOrientation() == "Horizontal":
             for cell in self.cells:
-                if not cell.generateWord(board, "Vertical").isWord() and len(cell.generateWord(board, "Vertical").string) > 1:
+                if not cell.generateWord(board, "Vertical").isWord() and len(
+                        cell.generateWord(board, "Vertical").string) > 1:
                     return False
             return self.cells[0].generateWord(board, "Horizontal").isWord()
         else:
             for cell in self.cells:
-                if not cell.generateWord(board, "Horizontal").isWord() and len(cell.generateWord(board, "Horizontal").string) > 1:
+                if not cell.generateWord(board, "Horizontal").isWord() and len(
+                        cell.generateWord(board, "Horizontal").string) > 1:
                     return False
             return self.cells[0].generateWord(board, "Vertical").isWord()
 
@@ -287,7 +297,7 @@ class WordOnBoard:
 
     def getScore(self, board):
         score = 0
-        if self.isWord():     # In fact it is enough to check that len(self.string) > 1
+        if self.isWord():  # In fact it is enough to check that len(self.string) > 1
             wordMultiplier = 1
             for cell in self.cells:
                 lettterMultiplier = 1
@@ -307,9 +317,9 @@ class WordOnBoard:
 class Bag:
     def __init__(self):
         self.bag = {' ': 2, 'a': 9, 'b': 2, 'c': 2, 'd': 4, 'e': 12, 'f': 2, 'g': 3,
-           'h': 2, 'i': 9, 'j': 1, 'k': 1, 'l': 4, 'm': 2, 'n': 6, 'o': 8,
-           'p': 2, 'q': 1, 'r': 6, 's': 4, 't': 6, 'u': 4, 'v': 2, 'w': 2,
-           'x': 1, 'y': 2, 'z': 1}
+                    'h': 2, 'i': 9, 'j': 1, 'k': 1, 'l': 4, 'm': 2, 'n': 6, 'o': 8,
+                    'p': 2, 'q': 1, 'r': 6, 's': 4, 't': 6, 'u': 4, 'v': 2, 'w': 2,
+                    'x': 1, 'y': 2, 'z': 1}
 
         self.lettersNum = 100
 
@@ -317,7 +327,7 @@ class Bag:
         if self.bag[letter] > 0:
             self.bag[letter] -= 1
             self.lettersNum -= 1
-        else: # Should I throw an Exception here?
+        else:  # Should I throw an Exception here?
             print("Mistake! It is impossible to take the letter '", letter, "'", sep="")
             pass
 
@@ -442,23 +452,23 @@ class Scoring:
             return "AI"
 
 
-def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  #Word is a string, rowBegin and colBegin are numbers, orientation is a char ('h' or 'v')
+def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  # Word is a string, rowBegin and colBegin are numbers, orientation is a char ('h' or 'v')
     wordCells = []
     if orientation == 'h':
         rowEnd = rowBegin
         colEnd = colBegin + len(word) - 1
         for i in range(colBegin, colEnd + 1):
-            currentLetter = word[i-colBegin]
+            currentLetter = word[i - colBegin]
             wordCells.append(Cell(rowBegin, i))
-            wordCells[i-colBegin].letter = currentLetter
+            wordCells[i - colBegin].letter = currentLetter
 
     elif orientation == 'v':
         colEnd = colBegin
         rowEnd = rowBegin + len(word) - 1
         for i in range(rowBegin, rowEnd + 1):
-            currentLetter = word[i-rowBegin]
+            currentLetter = word[i - rowBegin]
             wordCells.append(Cell(i, colBegin))
-            wordCells[i-rowBegin].letter = currentLetter
+            wordCells[i - rowBegin].letter = currentLetter
 
     word = WordOnBoard(wordCells)
     return word
@@ -467,6 +477,8 @@ def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  #Word is a s
 myBoard = Board(15, 15)
 myScore = Scoring()
 word = WordOnBoardConstructor("nose", 6, 6, 'v')
+myBoard.addWord(word)
+###
 word1 = WordOnBoardConstructor("lion", 6, 3, "h")
 print(word.getScore(myBoard))
 myBoard.addWord(word)
@@ -475,8 +487,9 @@ myBoard.addWord(word1)
 word2 = WordOnBoardConstructor("apple", 0, 0, 'h')
 print(word2.isLinked(myBoard))
 myBoard.addWord(word2)
+###
 myBoard.printBoard()
 print(myScore.scoreAI, myScore.scorePlayer)
 
-
 slovo = WordAI("huma")
+slovo.allPossibleWords(myBoard)
