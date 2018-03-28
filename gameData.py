@@ -19,7 +19,7 @@ class Scoring:
                     currentWord = cell.generateWord(board, "Horizontal")
                     self.scoreAI += currentWord.getScore()
             self.scoreAI += newWord.getScore()
-            self.priority= "Player"
+            self.priority = "Player"
 
         elif self.priority == "Player":
             if newWord.getOrientation() == "Horizontal":
