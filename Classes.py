@@ -25,7 +25,7 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
                 curString = ""
                 for letter in psiWord:
                     curString += letter
-                curWord = Word(curString, self.dictType)
+                curWord = WordAI(curString, self.dictType)
                 if curWord.isWord():
                     subWordsData.add(curWord.string) # STRING JUST TO TEST
         return subWordsData
@@ -71,7 +71,6 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
                             break
                         else:
                             stakedLetters.append((temp + k + len(prevData), playBoard.board[i][k].letter))
-
                     subWordsData = set()
                     for psiWord in permutations(self.string, curLen):
                         curString = ""
@@ -81,7 +80,10 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
                         for letter in psiWord:
                             curString += letter
                         curWord = WordAI(curString)  # Here in the arguments was self.datatype, I deleted it, because I moved all dictTypes to config
-                        if curWord.isWord() and isLinked(playBoard, ):
+                        cellData = []
+                        for curPos in range(len(self.string) + 1):
+                            cellData.append(Cell(i, curPos + j, self.string[curPos]))
+                        if curWord.isWord() and curWord.isLinked(playBoard, cellData):
                             subWordsData.add(curWord.string)  # STRING JUST TO TEST
                     for elem in subWordsData:
                         wordsAndCoordsH.add((elem, (i, j)))
@@ -209,11 +211,11 @@ class WordOnBoard:
                                 if not board.board[firstCell.row - 1][firstCell.col].isEmpty():
                                     return False
                             if lastCell.row + 1 < board.height:
-                                if not board.board[lastCell.row + 1][lastCell.col].letter.isEmpty():
+                                if not board.board[lastCell.row + 1][lastCell.col].isEmpty():
                                     return False
                         else:  # Word is horizontal
                             if firstCell.col - 1 >= 0:
-                                if not board.board[firstCell.row][firstCell.col - 1].letter.isEmpty():
+                                if not board.board[firstCell.row][firstCell.col - 1].isEmpty():
                                     return False
                             if lastCell.row + 1 < board.length:
                                 if not board.board[lastCell.row][lastCell.col + 1].letter.isEmpty():
@@ -259,12 +261,12 @@ class WordOnBoard:
     def areFormedWordsValid(self, board):  # Checks whether all new formed words are valid
         if self.getOrientation() == "Horizontal":
             for cell in self.cells:
-                if not cell.generateWord(board, "Vertical").isWord() and len(cell.generateWord(board, "Vertical")) > 1:
+                if not cell.generateWord(board, "Vertical").isWord() and len(cell.generateWord(board, "Vertical").string) > 1:
                     return False
             return self.cells[0].generateWord(board, "Horizontal").isWord()
         else:
             for cell in self.cells:
-                if not cell.generateWord(board, "Horizontal").isWord() and len(cell.generateWord(board, "Horizontal")) > 1:
+                if not cell.generateWord(board, "Horizontal").isWord() and len(cell.generateWord(board, "Horizontal").string) > 1:
                     return False
             return self.cells[0].generateWord(board, "Vertical").isWord()
 
