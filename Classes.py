@@ -132,7 +132,7 @@ class Cell:
         self.col = col
         self.letter = letter
 
-    def generateWord(self, board, orientation): # Returns a word, that contains this cell
+    def generateWord(self, board, orientation): # Returns a word, that contains this cell, it may be just one cell
         if orientation == "Horizontal":             # Orientation is a string ("Horizontal" or "Vertical")
             leftCol = self.col
             while leftCol >= 0 and board.board[self.row][leftCol] != '-':
@@ -369,17 +369,18 @@ class Board:
                 print(self.board[row][col].letter, end=" ")
             print()
         print()
+
     def boardEmptiness(self):
         emptyData = [[[0, 0] for i in range(self.length)] for j in range(self.height)]
         for i in range(self.height):
             curEmpty = 0
             for j in range(self.length - 1, -1, -1):
-                curEmpty += self.board[i][j].isEmpty
+                curEmpty += self.board[i][j].isEmpty()
                 emptyData[i][j][0] = curEmpty
         for i in range(self.length):
             curEmpty = 0
             for j in range(self.height - 1, -1, -1):
-                curEmpty += self.board[j][i].isEmpty
+                curEmpty += self.board[j][i].isEmpty()
                 emptyData[j][i][1] = curEmpty
         return emptyData
 
@@ -392,7 +393,7 @@ def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  #Word is a s
         for i in range(colBegin, colEnd + 1):
             currentLetter = word[i-colBegin]
             wordCells.append(Cell(rowBegin, i))
-            wordCells[i-colBegin].letter(currentLetter)
+            wordCells[i-colBegin].letter = currentLetter
 
     elif orientation == 'v':
         colEnd = colBegin
@@ -400,7 +401,7 @@ def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  #Word is a s
         for i in range(rowBegin, rowEnd + 1):
             currentLetter = word[i-rowBegin]
             wordCells.append(Cell(i, colBegin))
-            wordCells[i-rowBegin].letter(currentLetter)
+            wordCells[i-rowBegin].letter = currentLetter
 
     word = WordOnBoard(wordCells)
     return word
