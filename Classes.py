@@ -350,7 +350,6 @@ class Board:
                 self.board[row].append(Cell(row, col))
 
     def addWord(self, word):  # Latter it is necessary to add Scoring object as a parameter
-        from gameData import gameScore
         if word.isValidWord(self):
             rowBegin = word.cells[0].row
             rowEnd = word.cells[len(word.cells) - 1].row
@@ -367,7 +366,8 @@ class Board:
                 for letter in word.string:
                     self.board[rowBegin + counter][colBegin].letter = letter
                     counter += 1
-            gameScore.updateScore(self, word)
+            global myScore
+            myScore.updateScore(self, word)
             self.updateBonuses(word)
         else:  # Should i throw an exception here?
             pass
@@ -460,6 +460,7 @@ def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  #Word is a s
     return word
 
 myBoard = Board(15, 15)
+myScore = Scoring()
 word = WordOnBoardConstructor("nose", 6, 6, 'v')
 myBoard.addWord(word)
 myBoard.printBoard()
