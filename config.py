@@ -40,6 +40,7 @@ hashesPlayer = dict()
 for dict in dictionaries:
     hashesAI[dict] = hashTabling(dict)
     hashesPlayer[dict] = hashTabling(dict)
+
 dictAI = "Big"
 dictPlayer = "Large"
 isTested = True   # !!!! IF YOU NEED TO TEST SET THIS FIELD AS TRUE !!!!!!!!
