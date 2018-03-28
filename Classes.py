@@ -31,24 +31,13 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
         return subWordsData
 
     def allPossibleWords(self, playBoard):
-        emptyData = [[[0, 0] for i in range(playBoard.length)] for j in range(playBoard.height)]
-        for i in range(playBoard.height):
-            curEmpty = 0
-            for j in range(playBoard.length - 1, -1, -1):
-                curEmpty += playBoard.board[i][j].isEmpty
-                emptyData[i][j][0] = curEmpty
-        for i in range(playBoard.length):
-            curEmpty = 0
-            for j in range(playBoard.height - 1, -1, -1):
-                curEmpty += playBoard.board[j][i].isEmpty
-                emptyData[j][i][1] = curEmpty
+        emptyData = playBoard.boardEmptiness()
         ### Horizontal
         wordsAndCoordsH = set()
         wordsOnlyH = set()
         for i in range(playBoard.height):
             for j in range(playBoard.length - 1, -1, -1):
                 maxLetters = min(len(self.string), emptyData[i][j][0]) # Hand size irl ()
-                print(maxLetters)
                 for curLen in range(1, maxLetters + 1):
                     currentEmptiness = 0
                     temp = 0
@@ -381,6 +370,19 @@ class Board:
                 print(self.board[row][col].letter, end=" ")
             print()
         print()
+    def boardEmptiness(self):
+        emptyData = [[[0, 0] for i in range(self.length)] for j in range(self.height)]
+        for i in range(self.height):
+            curEmpty = 0
+            for j in range(self.length - 1, -1, -1):
+                curEmpty += self.board[i][j].isEmpty
+                emptyData[i][j][0] = curEmpty
+        for i in range(self.length):
+            curEmpty = 0
+            for j in range(self.height - 1, -1, -1):
+                curEmpty += self.board[j][i].isEmpty
+                emptyData[j][i][1] = curEmpty
+        return emptyData
 
 
 def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  #Word is a string, rowBegin and colBegin are numbers, orientation is a char ('h' or 'v')
@@ -408,3 +410,5 @@ myBoard = Board(15, 15)
 word = WordOnBoardConstructor("nose", 6, 6, 'v')
 myBoard.addWord(word)
 myBoard.printBoard()
+slovo = WordAI("huma")
+slovo.allPossibleWords(myBoard)
