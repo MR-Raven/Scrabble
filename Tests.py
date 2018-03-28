@@ -4,12 +4,11 @@ myBoard = Board(15, 15)
 myBag = Bag()
 word1 = WordOnBoardConstructor("appl", 0, 0, 'h')
 word2 = WordOnBoardConstructor("like", 0, 3, 'v')
-word1.isLinked = True
-word2.isLinked = True
 cell1 = Cell(0, 4, 'e')
-word1.addLetter(cell1, True)
+word1.addLetter(cell1)
 myBoard.addWord(word1)
 myBoard.printBoard()
+
 """ TEST NeighborsNum
 
 def testNeighborsNum(row, col):
