@@ -32,12 +32,8 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
         return subWordsData
 
     def isLinked(self, board, cellsData):  # Checks whether there are neighbors from old Cells
-        firstCell = cellsData[0]
-        lastCell = cellsData[len(self.string) - 1]
-        if firstCell.neighborsNum(board) > 1 or lastCell.neighborsNum(board) > 1:
-            return True
-        for i in range(1, len(self.string) - 1):
-            if cellsData[i].neighborsNum(board) > 2:
+        for i in range(0, len(self.string)):
+            if cellsData[i].neighborsNum(board) > 0:
                 return True
         return False
 
@@ -55,23 +51,24 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                     stakedLetters = []
                     prevData = []
                     for k in range(j - 1, -1, -1):
-                        if playBoard.board[i][k].isEmpty:
+                        if playBoard.board[i][k].isEmpty():
                             break
                         else:
                             prevData.insert(0, playBoard.board[i][k].letter)
                     for k in range(len(prevData)):
                         stakedLetters.append((k, prevData[k]))
                     while currentEmptiness != maxLetters:
-                        if playBoard.board[i][j + temp].isEmpty:
+                        if playBoard.board[i][j + temp].isEmpty():
                             currentEmptiness += 1
                         else:
                             stakedLetters.append((temp + len(prevData), playBoard.board[i][j + temp].letter))
                         temp += 1
                     for k in range(j + temp, playBoard.length):
-                        if playBoard.board[i][k].isEmpty:
+                        if playBoard.board[i][k].isEmpty():
                             break
                         else:
                             stakedLetters.append((temp + k + len(prevData), playBoard.board[i][k].letter))
+
                     subWordsData = set()
                     for psiWord in permutations(self.string, curLen):
                         curString = ""
@@ -80,17 +77,18 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             psiWord.insert(stakedLetters[inserts][0], stakedLetters[inserts][1])
                         for letter in psiWord:
                             curString += letter
-                        curWord = WordAI(curString)  # Here in the arguments was self.datatype, I deleted it, because I moved all dictTypes to config
+                        curWord = WordAI(
+                            curString)  # Here in the arguments was self.datatype, I deleted it, because I moved all dictTypes to config
                         cellData = []
                         for curPos in range(len(curWord.string)):
                             cellData.append(Cell(i, curPos + j, curWord.string[curPos]))
-                        if curWord.isWord():  # and not curWord.isLinked(playBoard, cellData):
+                        if curWord.isWord() and curWord.isLinked(playBoard, cellData):
                             subWordsData.add(curWord.string)  # STRING JUST TO TEST
                     for elem in subWordsData:
                         wordsAndCoordsH.add((elem, (i, j)))
                         wordsOnlyH.add(elem)
         print('H')
-        print(wordsOnlyH)
+        print(wordsAndCoordsH)
 
         ### Vertical (comments like previous)
         wordsAndCoordsV = set()
@@ -104,20 +102,20 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                     stakedLetters = []
                     prevData = []
                     for k in range(i - 1, -1, -1):
-                        if playBoard.board[k][j].isEmpty:
+                        if playBoard.board[k][j].isEmpty():
                             break
                         else:
                             prevData.insert(0, playBoard.board[k][j].letter)
                     for k in range(len(prevData)):
                         stakedLetters.append((k, prevData[k]))
                     while currentEmptiness != maxLetters:
-                        if playBoard.board[i + temp][j].isEmpty:
+                        if playBoard.board[i + temp][j].isEmpty():
                             currentEmptiness += 1
                         else:
                             stakedLetters.append((temp + len(prevData), playBoard.board[i + temp][j].letter))
                         temp += 1
                     for k in range(i + temp, playBoard.height):
-                        if playBoard.board[i][k].isEmpty:
+                        if playBoard.board[i][k].isEmpty():
                             break
                         else:
                             stakedLetters.append((temp + k + len(prevData), playBoard.board[k][j].letter))
@@ -131,7 +129,10 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         for letter in psiWord:
                             curString += letter
                         curWord = WordAI(curString)
-                        if curWord.isWord():
+                        cellData = []
+                        for curPos in range(len(curWord.string)):
+                            cellData.append(Cell(i, curPos + j, curWord.string[curPos]))
+                        if curWord.isWord() and curWord.isLinked(playBoard, cellData):
                             subWordsData.add(curWord.string)
                     for elem in subWordsData:
                         wordsAndCoordsV.add((elem, (i, j)))
@@ -236,8 +237,12 @@ class WordOnBoard:
         return self.hash in hashesPlayer[self.dictType].keys() and self.string in hashesPlayer[self.dictType][self.hash]
 
     def isLinked(self, board):  # Checks whether there are neighbors from old Cells
-        for i in range(0, len(self.string)):
-            if self.cells[i].neighborsNum(board) > 0:
+        firstCell = self.cells[0]
+        lastCell = self.cells[len(self.string) - 1]
+        if firstCell.neighborsNum(board) > 1 or lastCell.neighborsNum(board) > 1:
+            return True
+        for i in range(1, len(self.string) - 1):
+            if self.cells[i].neighborsNum(board) > 2:
                 return True
         return False
 
@@ -369,7 +374,6 @@ class Board:
                     counter += 1
             global myScore
             myScore.updateScore(self, word)
-            myScore.finishTurn()
             self.updateBonuses(word)
         else:  # Should i throw an exception here?
             pass
@@ -417,6 +421,7 @@ class Scoring:
                     currentWord = cell.generateWord(board, "Horizontal")
                     self.scoreAI += currentWord.getScore(board)
             self.scoreAI += newWord.getScore(board)
+            self.priority = "Player"
 
         elif self.priority == "Player":
             if newWord.getOrientation() == "Horizontal":
@@ -428,16 +433,7 @@ class Scoring:
                     currentWord = cell.generateWord(board, "Horizontal")
                     self.scorePlayer += currentWord.getScore(board)
             self.scorePlayer += newWord.getScore(board)
-        else:
-            print("Mistake in priority!")
-
-    def finishTurn(self):
-        if self.priority == "Player":
             self.priority = "AI"
-        elif self.priority == "AI":
-            self.priority = "Player"
-        else:
-            print("Mistake in priority!")
 
     def turnPriority(self):
         from random import randint
@@ -474,8 +470,7 @@ def WordOnBoardConstructor(word, rowBegin, colBegin,
 myBoard = Board(15, 15)
 myScore = Scoring()
 word = WordOnBoardConstructor("nose", 6, 6, 'v')
-word1 = WordOnBoardConstructor("lion", 6, 3, "h")
 myBoard.addWord(word)
-print(word1.isLinked(myBoard))
 myBoard.printBoard()
 slovo = WordAI("huma")
+slovo.allPossibleWords(myBoard)
