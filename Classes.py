@@ -347,31 +347,32 @@ class Board:
 
     def addWord(self, word):  # Latter it is necessary to add Scoring object as a parameter
         if word.isValidWord(self):
-            rowBegin = word.cells[0].row
-            rowEnd = word.cells[len(word.cells) - 1].row
-            colBegin = word.cells[0].col
-            colEnd = word.cells[len(word.cells) - 1].col
             global myScore
             myScore.updateScore(self, word)
-            myScore.finishTurn()
-            self.updateBonuses(word)
-            if rowBegin == rowEnd:  # "Horizontal orientation"
-                counter = 0
-                for letter in word.string:
-                    self.board[rowBegin][colBegin + counter].letter = letter
-                    counter += 1
-
-            elif colBegin == colEnd:  # Vertical orientation
-                counter = 0
-                for letter in word.string:
-                    self.board[rowBegin + counter][colBegin].letter = letter
-                    counter += 1
+            self.updateBoard(word)
         else:  # Should i throw an exception here?
             pass
 
-    def updateBonuses(self, newWord):
-        for cell in word.cells:
+    def updateBoard(self, newWord):
+        rowBegin = word.cells[0].row
+        rowEnd = word.cells[len(word.cells) - 1].row
+        colBegin = word.cells[0].col
+        colEnd = word.cells[len(word.cells) - 1].col
+        for cell in word.cells:                   # Update bonuses
             self.bonuses[cell.row][cell.col] = "00"
+
+        # Update letters
+        if rowBegin == rowEnd:  # "Horizontal orientation"
+            counter = 0
+            for letter in word.string:
+                self.board[rowBegin][colBegin + counter].letter = letter
+                counter += 1
+
+        elif colBegin == colEnd:  # Vertical orientation
+            counter = 0
+            for letter in word.string:
+                self.board[rowBegin + counter][colBegin].letter = letter
+                counter += 1
 
     def printBoard(self):
         for row in range(self.height):
@@ -414,6 +415,7 @@ class Scoring:
                         currentWord = cell.generateWord(board, "Horizontal")
                         self.scoreAI += currentWord.getScore(board)
             self.scoreAI += newWord.getScore(board)
+            self.priority = "Player"
 
         elif self.priority == "Player":
             if newWord.getOrientation() == "Horizontal":
@@ -427,14 +429,7 @@ class Scoring:
                         currentWord = cell.generateWord(board, "Horizontal")
                         self.scorePlayer += currentWord.getScore(board)
             self.scorePlayer += newWord.getScore(board)
-        else:
-            print("Mistake in priority!")
-
-    def finishTurn(self):
-        if self.priority == "Player":
             self.priority = "AI"
-        elif self.priority == "AI":
-            self.priority = "Player"
         else:
             print("Mistake in priority!")
 
