@@ -303,13 +303,13 @@ class WordOnBoard:
                 lettterMultiplier = 1
                 if board.bonuses[cell.row][cell.col] == "3W":
                     wordMultiplier *= 3
-                    board.bonuses[cell.row][cell.col] = "00"
+                elif board.bonuses[cell.row][cell.col] == "2W":
                     wordMultiplier *= 2
                 elif board.bonuses[cell.row][cell.col] == "3L":
                     lettterMultiplier = 3
                 elif board.bonuses[cell.row][cell.col] == "2L":
                     lettterMultiplier = 2
-                    score += lettterMultiplier * scores[cell.letter]
+                score += lettterMultiplier * scores[cell.letter]
             score *= wordMultiplier
         return score
 
@@ -361,6 +361,10 @@ class Board:
             rowEnd = word.cells[len(word.cells) - 1].row
             colBegin = word.cells[0].col
             colEnd = word.cells[len(word.cells) - 1].col
+            global myScore
+            myScore.updateScore(self, word)
+            myScore.finishTurn()
+            self.updateBonuses(word)
             if rowBegin == rowEnd:  # "Horizontal orientation"
                 counter = 0
                 for letter in word.string:
@@ -372,9 +376,6 @@ class Board:
                 for letter in word.string:
                     self.board[rowBegin + counter][colBegin].letter = letter
                     counter += 1
-            global myScore
-            myScore.updateScore(self, word)
-            self.updateBonuses(word)
         else:  # Should i throw an exception here?
             pass
 
@@ -414,24 +415,28 @@ class Scoring:
         if self.priority == "AI":
             if newWord.getOrientation() == "Horizontal":
                 for cell in newWord.cells:
-                    currentWord = cell.generateWord(board, "Vertical")
-                    self.scoreAI += currentWord.getScore(board)
+                    if board.board[cell.row][cell.col].isEmpty():
+                        currentWord = cell.generateWord(board, "Vertical")
+                        self.scoreAI += currentWord.getScore(board)
             else:
                 for cell in newWord.cells:
-                    currentWord = cell.generateWord(board, "Horizontal")
-                    self.scoreAI += currentWord.getScore(board)
+                    if board.board[cell.row][cell.col].isEmpty():
+                        currentWord = cell.generateWord(board, "Horizontal")
+                        self.scoreAI += currentWord.getScore(board)
             self.scoreAI += newWord.getScore(board)
             self.priority = "Player"
 
         elif self.priority == "Player":
             if newWord.getOrientation() == "Horizontal":
                 for cell in newWord.cells:
-                    currentWord = cell.generateWord(board, "Vertical")
-                    self.scorePlayer += currentWord.getScore(board)
+                    if board.board[cell.row][cell.col].isEmpty():
+                        currentWord = cell.generateWord(board, "Vertical")
+                        self.scorePlayer += currentWord.getScore(board)
             else:
                 for cell in newWord.cells:
-                    currentWord = cell.generateWord(board, "Horizontal")
-                    self.scorePlayer += currentWord.getScore(board)
+                    if board.board[cell.row][cell.col].isEmpty():
+                        currentWord = cell.generateWord(board, "Horizontal")
+                        self.scorePlayer += currentWord.getScore(board)
             self.scorePlayer += newWord.getScore(board)
             self.priority = "AI"
 
@@ -471,6 +476,18 @@ myBoard = Board(15, 15)
 myScore = Scoring()
 word = WordOnBoardConstructor("nose", 6, 6, 'v')
 myBoard.addWord(word)
+###
+word1 = WordOnBoardConstructor("lion", 6, 3, "h")
+print(word.getScore(myBoard))
+myBoard.addWord(word)
+print(word1.getScore(myBoard))
+myBoard.addWord(word1)
+word2 = WordOnBoardConstructor("apple", 0, 0, 'h')
+print(word2.isLinked(myBoard))
+myBoard.addWord(word2)
+###
 myBoard.printBoard()
+print(myScore.scoreAI, myScore.scorePlayer)
+
 slovo = WordAI("huma")
 slovo.allPossibleWords(myBoard)
