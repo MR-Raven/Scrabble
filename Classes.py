@@ -30,6 +30,16 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
                     subWordsData.add(curWord.string) # STRING JUST TO TEST
         return subWordsData
 
+    def isLinked(self, board, cellsData):  # Checks whether there are neighbors from old Cells
+        firstCell = cellsData[0]
+        lastCell = cellsData[len(self.string) - 1]
+        if firstCell.neighborsNum(board) > 1 or lastCell.neighborsNum(board) > 1:
+            return True
+        for i in range(1, len(self.string) - 1):
+            if cellsData[i].neighborsNum(board) > 2:
+                return True
+        return False
+
     def allPossibleWords(self, playBoard):
         emptyData = playBoard.boardEmptiness()
         ### Horizontal
@@ -71,7 +81,7 @@ class WordAI: ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'
                         for letter in psiWord:
                             curString += letter
                         curWord = WordAI(curString)  # Here in the arguments was self.datatype, I deleted it, because I moved all dictTypes to config
-                        if curWord.isWord():
+                        if curWord.isWord() and isLinked(playBoard, ):
                             subWordsData.add(curWord.string)  # STRING JUST TO TEST
                     for elem in subWordsData:
                         wordsAndCoordsH.add((elem, (i, j)))
