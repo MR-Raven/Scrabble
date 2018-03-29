@@ -38,7 +38,7 @@ def sorting(wordDataUnsorted, type):
     wordDataSorted.close()
 
 # Full-sized Sort + Hashingas
-for type in typeData:
+for type in dictionaries:
     firstUnsortedPath = "/home/pavlik/Pavlik/python/Scrabble/dicts/wordsUnsorted"  # The first path is for Pavlik, the second one is for Pavel
     secondUnsortedPath = "/home/pavel/MyDocs/Programming/Python/Scrabble/dicts/wordsUnsorted"
     path = secondUnsortedPath + type + ".txt"
