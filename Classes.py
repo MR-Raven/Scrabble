@@ -131,11 +131,12 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         for letter in psiWord:
                             curString += letter
                         curWord = WordAI(curString)
+                        if curWord.string == "top" and i == 6 and j == 7:
+                            print()
                         ### Cells and valid linking
                         cellData = []
                         for curPos in range(len(curWord.string)):
                             cellData.append(Cell(i + curPos, j, curWord.string[curPos]))
-                        goodBoardation = True
                         if curWord.isWord() and curWord.isLinked(playBoard, cellData) and \
                                 _areFormedWordsValid(playBoard, cellData, "Vertical"):
                             subWordsData.add(curWord.string)
@@ -146,17 +147,21 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
         print(wordsAndCoordsH)
 
 def _areFormedWordsValid(board, cellData, orientation):  # Where to put it properly??
-    if orientation() == "Horizontal":
+    if orientation == "Horizontal":
         for cell in cellData:
+            print(cell.generateWord(board, "Vertical").string)
             if not cell.generateWord(board, "Vertical").isWord() and len(
                     cell.generateWord(board, "Vertical").string) > 1:
                 return False
+        print(cellData[0].generateWord(board, "Horizontal").string)
         return cellData[0].generateWord(board, "Horizontal").isWord()
     else:
         for cell in cellData:
+            print(cell.generateWord(board, "Horizontal").string)
             if not cell.generateWord(board, "Horizontal").isWord() and len(
                     cell.generateWord(board, "Horizontal").string) > 1:
                 return False
+        print(cellData[0].generateWord(board, "Vertical").string)
         return cellData[0].generateWord(board, "Vertical").isWord()
 
 
