@@ -82,19 +82,21 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         cellData = []
                         for curPos in range(len(curWord.string)):
                             cellData.append(Cell(i, curPos + j, curWord.string[curPos]))
-                        if curWord.string == "pot" and i == 5 and j == 5:
+                        if curWord.string == "top" and i == 6 and j == 7:
                             print()
                         ### New words formation check
                         newWordsFlag = True
                         for curLetter in range(j, j + len(curWord.string)):
-                            newFormedWord = playBoard.board[i][curLetter].letter
+                            newFormedWord = curWord.string[curLetter - j]
                             xMin = i - 1
                             while xMin >= 0 and not playBoard.board[xMin][curLetter].isEmpty():
                                 newFormedWord = playBoard.board[xMin][curLetter].letter + newFormedWord
+                                xMin -= 1
                             xMax = i + 1
                             while xMax < playBoard.height and not playBoard.board[xMax][curLetter].isEmpty():
                                 newFormedWord += playBoard.board[xMax][curLetter].letter
-                            if not WordAI(newFormedWord).isWord():
+                                xMax += 1
+                            if not WordAI(newFormedWord).isWord() and len(newFormedWord) >= 2:
                                 newWordsFlag = False
                         if curWord.isWord() and curWord.isLinked(playBoard, cellData) and newWordsFlag:
                             subWordsData.add(curWord.string)  # STRING JUST TO TEST
@@ -151,14 +153,16 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         ### New words formation check
                         newWordsFlag = True
                         for curLetter in range(i, i + len(curWord.string)):
-                            newFormedWord = playBoard.board[curLetter][j].letter
+                            newFormedWord = curWord.string[curLetter - i]
                             xMin = j - 1
                             while xMin >= 0 and not playBoard.board[curLetter][xMin].isEmpty():
                                 newFormedWord = playBoard.board[curLetter][xMin].letter + newFormedWord
-                            xMax = i + 1
+                                xMin -= 1
+                            xMax = j + 1
                             while xMax < playBoard.length and not playBoard.board[curLetter][xMax].isEmpty():
                                 newFormedWord += playBoard.board[curLetter][xMax].letter
-                            if not WordAI(newFormedWord).isWord():
+                                xMax += 1
+                            if not WordAI(newFormedWord).isWord() and len(newFormedWord) >= 2:
                                 newWordsFlag = False
                         if curWord.isWord() and curWord.isLinked(playBoard, cellData) and newWordsFlag:
                             subWordsData.add(curWord.string)
@@ -166,7 +170,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         wordsAndCoordsV.add((elem, (i, j)))
                         wordsOnlyV.add(elem)
         print('V')
-        print(wordsAndCoordsH)
+        print(wordsAndCoordsV)
 
 
 class Cell:
