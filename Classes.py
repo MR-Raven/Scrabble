@@ -46,6 +46,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
             for j in range(playBoard.length - 1, -1, -1):
                 maxLetters = min(len(self.string), emptyData[i][j][0])  # Hand size irl ()
                 for curLen in range(1, maxLetters + 1):
+                    ### Stable letters companation
                     currentEmptiness = 0
                     temp = 0
                     stakedLetters = []
@@ -68,7 +69,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             break
                         else:
                             stakedLetters.append((temp + k + len(prevData), playBoard.board[i][k].letter))
-
+                    ### Subwords search
                     subWordsData = set()
                     for psiWord in permutations(self.string, curLen):
                         curString = ""
@@ -77,12 +78,12 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             psiWord.insert(stakedLetters[inserts][0], stakedLetters[inserts][1])
                         for letter in psiWord:
                             curString += letter
-                        curWord = WordAI(
-                            curString)  # Here in the arguments was self.datatype, I deleted it, because I moved all dictTypes to config
+                        curWord = WordAI(curString)  # Here in the arguments was self.datatype, I deleted it, because I moved all dictTypes to config
                         cellData = []
                         for curPos in range(len(curWord.string)):
                             cellData.append(Cell(i, curPos + j, curWord.string[curPos]))
-                        if curWord.isWord() and curWord.isLinked(playBoard, cellData):
+                        if curWord.isWord() and curWord.isLinked(playBoard, cellData) and \
+                                _areFormedWordsValid(playBoard, cellData, "Horizontal"):
                             subWordsData.add(curWord.string)  # STRING JUST TO TEST
                     for elem in subWordsData:
                         wordsAndCoordsH.add((elem, (i, j)))
@@ -96,7 +97,8 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
         for j in range(playBoard.length):
             for i in range(playBoard.height - 1, -1, -1):
                 maxLetters = min(len(self.string), emptyData[i][j][1])  # Hand size irl ()
-                for curLen in range(1, maxLetters + 1):
+                for curLen in range(2, maxLetters + 1):
+                    ### Stable letters companation
                     currentEmptiness = 0
                     temp = 0
                     stakedLetters = []
@@ -119,7 +121,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             break
                         else:
                             stakedLetters.append((temp + k + len(prevData), playBoard.board[k][j].letter))
-
+                    ### Subwords search
                     subWordsData = set()
                     for psiWord in permutations(self.string, curLen):
                         curString = ""
@@ -129,16 +131,33 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         for letter in psiWord:
                             curString += letter
                         curWord = WordAI(curString)
+                        ### Cells and valid linking
                         cellData = []
                         for curPos in range(len(curWord.string)):
-                            cellData.append(Cell(i, curPos + j, curWord.string[curPos]))
-                        if curWord.isWord() and curWord.isLinked(playBoard, cellData):
+                            cellData.append(Cell(i + curPos, j, curWord.string[curPos]))
+                        goodBoardation = True
+                        if curWord.isWord() and curWord.isLinked(playBoard, cellData) and \
+                                _areFormedWordsValid(playBoard, cellData, "Vertical"):
                             subWordsData.add(curWord.string)
                     for elem in subWordsData:
                         wordsAndCoordsV.add((elem, (i, j)))
                         wordsOnlyV.add(elem)
         print('V')
-        print(wordsOnlyV)
+        print(wordsAndCoordsH)
+
+def _areFormedWordsValid(board, cellData, orientation):  # Where to put it properly??
+    if orientation() == "Horizontal":
+        for cell in cellData:
+            if not cell.generateWord(board, "Vertical").isWord() and len(
+                    cell.generateWord(board, "Vertical").string) > 1:
+                return False
+        return cellData[0].generateWord(board, "Horizontal").isWord()
+    else:
+        for cell in cellData:
+            if not cell.generateWord(board, "Horizontal").isWord() and len(
+                    cell.generateWord(board, "Horizontal").string) > 1:
+                return False
+        return cellData[0].generateWord(board, "Vertical").isWord()
 
 
 class Cell:
@@ -279,7 +298,7 @@ class WordOnBoard:
         self.string += cell.letter
         self.hash = hashFunc(self.string)
         self.cells.append(cell)
-        if not self.isConnected():  # Should I throw an Exception here?
+        if not self.isConnected():  # Should I throw an Exception here? Surely you should
             print("Mistake! You can't add the letter '", cell.letter, "', a word should be connected", sep="")
             self.string = self.string[: -1]
             self.hash = hashFunc(self.string)
@@ -346,7 +365,7 @@ class Bag:
 
 
 class Board:
-    def __init__(self, boardLength, board  Height):
+    def __init__(self, boardLength, boardHeight):
         self.board = [[] for x in range(boardHeight)]
         self.bonuses = bonuses
         self.length = boardLength
@@ -476,10 +495,9 @@ def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  # Word is a 
 
 myBoard = Board(15, 15)
 myScore = Scoring()
-"""
-word = WordOnBoardConstructor("nose", 6, 6, 'v')
+word = WordOnBoardConstructor("at", 6, 6, 'h')
 myBoard.addWord(word)
-###
+'''
 word1 = WordOnBoardConstructor("lion", 6, 3, "h")
 print(word.getScore(myBoard))
 myBoard.addWord(word)
@@ -487,14 +505,11 @@ print(word1.getScore(myBoard))
 myBoard.addWord(word1)
 word2 = WordOnBoardConstructor("apple", 0, 0, 'h')
 print(word2.isLinked(myBoard))
-myBoard.addWord(word2)"""
-for x in range(0, 14):
-    for y in range(0, 14):
-        cell = Cell(x, y, 'a')
-        print(cell.neighborsNum(myBoard), end=" ")
+myBoard.addWord(word2)
 ###
 myBoard.printBoard()
 print(myScore.scoreAI, myScore.scorePlayer)
-
-slovo = WordAI("huma")
+'''
+myBoard.printBoard()
+slovo = WordAI("top")
 slovo.allPossibleWords(myBoard)
