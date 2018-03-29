@@ -146,7 +146,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
         print(wordsAndCoordsH)
 
 def _areFormedWordsValid(board, cellData, orientation):  # Where to put it properly??  You have a mistake here, orientation is a
-    if orientation() == "Horizontal":  # You have a mistake here, orientation is a method, it should be called from an object
+    if orientation == "Horizontal":  # You have a mistake here, orientation is a method, it should be called from an object
         for cell in cellData:
             if not cell.generateWord(board, "Vertical").isWord() and len(
                     cell.generateWord(board, "Vertical").string) > 1:
@@ -169,22 +169,22 @@ class Cell:
     def generateWord(self, board, orientation):  # Returns a word, that contains this cell, it may be just one cell
         if orientation == "Horizontal":  # Orientation is a string ("Horizontal" or "Vertical")
             leftCol = self.col
-            while leftCol >= 0 and board.board[self.row][leftCol] != '-':
+            while leftCol >= 0 and not board.board[self.row][leftCol].isEmpty():
                 leftCol -= 1
             leftCol += 1
             rightCol = self.col
-            while rightCol < board.length and board.board[self.row][rightCol] != '-':
+            while rightCol < board.length and not board.board[self.row][rightCol].isEmpty():
                 rightCol += 1
             cells = []
             for column in range(leftCol, rightCol):
                 cells.append(board.board[self.row][column])
         else:
             bottomRow = self.row
-            while bottomRow >= 0 and board.board[bottomRow][self.col] != '-':
+            while bottomRow >= 0 and not board.board[bottomRow][self.col].isEmpty():
                 bottomRow -= 1
             bottomRow += 1
             topRow = self.row
-            while topRow < board.height and board.board[topRow][self.col] != '-':
+            while topRow < board.height and not board.board[topRow][self.col].isEmpty():
                 topRow += 1
             cells = []
             for row in range(bottomRow, topRow):
@@ -377,9 +377,9 @@ class Board:
     def addWord(self, word):  # Latter it is necessary to add Scoring object and Rack object as parameters
         if word.isValidWord(self):
             global myScore, myRack
+            myRack.drawNewTiles(myScore.priority)
             myScore.updateScore(self, word, myRack)
             self.updateBoard(word)
-            myRack.drawNewTiles()
         else:  # Should i throw an exception here?
             pass
 
@@ -497,9 +497,15 @@ class Scoring:
             return "Draw"
 
 class Rack:
-    def __init__(self, rackPlayer = [], rackAI = []):  # letters is a list of chars
-        self.rackPlayer = rackPlayer
-        self.rackAI = rackAI
+    def __init__(self, rackPlayer = None, rackAI = None):  # letters is a list of chars
+        if rackPlayer is None:
+            self.rackPlayer = []
+        else:
+            self.rackPlayer = rackPlayer
+        if rackAI is None:
+            self.rackAI = []
+        else:
+            self.rackAI = rackAI
 
     def removeLetter(self, letter, priority):  # priority is a string ("Player" or "AI")
         if priority == "Player":
@@ -543,6 +549,7 @@ class Rack:
                 self.rackAI.append(myBag.getRandomLetter())
         else:
             print("Mistake! There is no such name '", priority, "' for priority parameter", sep="")
+
 
 
 def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  # Word is a string, rowBegin and colBegin are numbers, orientation is a char ('h' or 'v')
