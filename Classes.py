@@ -346,7 +346,7 @@ class Bag:
 
 
 class Board:
-    def __init__(self, boardLength, boardHeight):
+    def __init__(self, boardLength, board  Height):
         self.board = [[] for x in range(boardHeight)]
         self.bonuses = bonuses
         self.length = boardLength
@@ -364,23 +364,23 @@ class Board:
             pass
 
     def updateBoard(self, newWord):
-        rowBegin = word.cells[0].row
-        rowEnd = word.cells[len(word.cells) - 1].row
-        colBegin = word.cells[0].col
-        colEnd = word.cells[len(word.cells) - 1].col
-        for cell in word.cells:                   # Update bonuses
+        rowBegin = newWord.cells[0].row
+        rowEnd = newWord.cells[len(newWord.cells) - 1].row
+        colBegin = newWord.cells[0].col
+        colEnd = newWord.cells[len(newWord.cells) - 1].col
+        for cell in newWord.cells:                   # Update bonuses
             self.bonuses[cell.row][cell.col] = "00"
 
         # Update letters
         if rowBegin == rowEnd:  # "Horizontal orientation"
             counter = 0
-            for letter in word.string:
+            for letter in newWord.string:
                 self.board[rowBegin][colBegin + counter].letter = letter
                 counter += 1
 
         elif colBegin == colEnd:  # Vertical orientation
             counter = 0
-            for letter in word.string:
+            for letter in newWord.string:
                 self.board[rowBegin + counter][colBegin].letter = letter
                 counter += 1
 
