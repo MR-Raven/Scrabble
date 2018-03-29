@@ -239,27 +239,32 @@ class WordOnBoard:
         self.dictType = dictPlayer  # Will we need this Class for AI words, if yes, it is necessary to change the type
         self.hash = hashFunc(self.string)
 
-    def isValidWord(self, board):
+    def isValidWord(self, board, score):    # It is necessary to check that there is at least one new letter
         if self.isWord():
             if self.isConnected():
-                if self.isLinked(board) or isTested:
+                if self.isLinked(board) or self.firstTurnCheck(board, score) or isTested:
                     if self.areFormedWordsValid(board) or isTested:
                         firstCell = self.cells[0]
                         lastCell = self.cells[len(self.string) - 1]
                         if self.getOrientation() == "Vertical":  # Word is vertical
                             if firstCell.row - 1 >= 0:
                                 if not board.board[firstCell.row - 1][firstCell.col].isEmpty():
+                                    print("Mistake! On the top of your word there shouldn't be other letters")
                                     return False
                             if lastCell.row + 1 < board.height:
                                 if not board.board[lastCell.row + 1][lastCell.col].isEmpty():
+                                    print("Mistake! On the bottom of your word there shouldn't be other letters")
                                     return False
                         else:  # Word is horizontal
                             if firstCell.col - 1 >= 0:
                                 if not board.board[firstCell.row][firstCell.col - 1].isEmpty():
+                                    print("Mistake! On the left of your word there shouldn't be other letters")
                                     return False
                             if lastCell.row + 1 < board.length:
                                 if not board.board[lastCell.row][lastCell.col + 1].isEmpty():
+                                    print("Mistake! On the right of your word there shouldn't be other letters")
                                     return False
+                        score.isFirstTurn = False
                         return True
                     print("Mistake! Your word: '", self.string, "'. All new formed words should be valid", sep="")
                     return False
@@ -312,6 +317,13 @@ class WordOnBoard:
                     return False
             return self.isWord()
 
+    def firstTurnCheck(self, board, score):
+        if score.isFirstTurn == True:
+            for cell in self.cells:
+                if cell.row == 7 and cell.col == 7:
+                    return True
+        return False
+
     def addLetter(self, cell, board):
         self.string += cell.letter
         self.hash = hashFunc(self.string)
@@ -324,6 +336,15 @@ class WordOnBoard:
             self.cells.pop()
             board.deleteCell(cell)
 
+    def deleteLastLetter(self, board):
+        if len(self.string) > 0:
+            if board.board[self.cells[-1].row][self.cells[-1].col].isNew:
+                board.deleteCell(self.cells[-1])
+            self.string = self.string[:-1]
+            self.hash = hashFunc(self.string)
+            self.cells.pop()
+        else:
+            print("Mistake! The word is empty, you can't delete any letter!")
     def getOrientation(self):
         firstCell = self.cells[0]
         lastCell = self.cells[len(self.string) - 1]
@@ -394,18 +415,15 @@ class Board:
             for col in range(boardLength):
                 self.board[row].append(Cell(row, col))
 
-    def addWord(self, word):  # Latter it is necessary to add Scoring object and Rack object as parameters
-        if word.isValidWord(self):
-            for cell in word.cells:
-                self.addCell(cell)
-            global myScore, myRack
-            myScore.updateScore(self, word, myRack)
+    def addWord(self, word, score, rack):  # score is a Score object, rack is a Rack object
+        if word.isValidWord(self, score):
+            score.updateScore(self, word, rack)
             self.updateBoard(word)
-            myRack.drawNewTiles()
+            rack.drawNewTiles(self, score)
         else:  # Should i throw an exception here? In this case it's essential to return all letters to a player's rack
-            for cell in word.cells:
-                if cell.isNew:
-                    self.deleteCell(cell)
+            while len(word.string) > 0:
+                word.deleteLastLetter(self)
+
 
     def updateBoard(self, newWord):
         for cell in newWord.cells:         # Update bonuses
@@ -415,16 +433,16 @@ class Board:
             self.board[cell.row][cell.col].isNew = False
 
     def addCell(self, cell):
-        if self.board[cell.row][cell.col].isEmpty():
+        if self.board[cell.row][cell.col].isEmpty() or self.board[cell.row][cell.col].letter == cell.letter:
             self.board[cell.row][cell.col].letter = cell.letter
         else:
-            print("MIstake! This cell is not empty!")
+            print("Mistake! This cell is not empty!")
 
     def deleteCell(self, cell):
         if self.board[cell.row][cell.col].isNew:
             self.board[cell.row][cell.col].letter = '-'
         else:
-            print("Mistake! THis cell wasn't added duting this turn, you can't delete it")
+            print("Mistake! This cell wasn't added during this turn, you can't delete it")
 
     def printBoard(self):
         for row in range(self.height):
@@ -453,6 +471,7 @@ class Scoring:
         self.scoreAI = 0
         self.scorePlayer = 0
         self.priority = self.turnPriority()
+        self.isFirstTurn = True
 
     def updateScore(self, board, newWord, rack):  # rack is an object of the class Rack
         if self.priority == "AI":
@@ -487,17 +506,16 @@ class Scoring:
         else:
             print("Mistake! There is no such name '", self.priority, "' for priority parameter", sep="")
 
-    def gameEndRecalculation(self):  # Latter it is necessary to add Rack object as a parameter
-        global myRack
-        for letter in myRack.rackAI:
+    def gameEndRecalculation(self, rack):  # rack is a Rack object
+        for letter in rack.rackAI:
             self.scoreAI -= scores[letter]
-        for letter in myRack.rackPlayer:
+        for letter in rack.rackPlayer:
             self.scorePlayer -= scores[letter]
         if len(myRack.rackAI) == 0:
-            for letter in myRack.rackPlayer:
+            for letter in rack.rackPlayer:
                 self.scoreAI += scores[letter]
         elif len(myRack.rackPlayer) == 0:
-            for letter in myRack.rackAI:
+            for letter in rack.rackAI:
                 self.scorePlayer += scores[letter]
 
     def turnPriority(self):
@@ -517,15 +535,12 @@ class Scoring:
             return "Draw"
 
 class Rack:
-    def __init__(self, rackPlayer = None, rackAI = None):  # letters is a list of chars
-        if rackPlayer is None:
-            self.rackPlayer = []
-        else:
-            self.rackPlayer = rackPlayer
-        if rackAI is None:
-            self.rackAI = []
-        else:
-            self.rackAI = rackAI
+    def __init__(self, bag):  # letters is a list of chars
+        self.rackPlayer = []
+        self.rackAI = []
+        for i in range(7):
+            self.addLetter(bag.getRandomLetter(), "AI")
+            self.addLetter(bag.getRandomLetter(), "Player")
 
     def removeLetter(self, letter, priority):  # priority is a string ("Player" or "AI")
         if priority == "Player":
@@ -559,18 +574,17 @@ class Rack:
             else:
                 print("Mistake! It's impossible to add a letter '", letter, "' to AI's rack, because it's already full")
 
-    def drawNewTiles(self):  # latter it is necessary to add a Bag and a Scoring() objects here
-        global myBag, myScore
-        if myScore.priority == "Player":
-            while len(self.rackPlayer) < 7 and len(myBag.bag) > 0:
-                self.rackPlayer.append(myBag.getRandomLetter())
-            myScore.priority = "AI"
-        elif myScore.priority == "AI":
-            while len(self.rackAI) < 7 and len(myBag.bag) > 0:
-                self.rackAI.append(myBag.getRandomLetter())
-            myScore.priority = "Player"
+    def drawNewTiles(self, bag, score):  # bag is a Bag object, score is a Scoring object
+        if score.priority == "Player":
+            while len(self.rackPlayer) < 7 and len(bag.bag) > 0:
+                self.rackPlayer.append(bag.getRandomLetter())
+            score.priority = "AI"
+        elif score.priority == "AI":
+            while len(self.rackAI) < 7 and len(bag.bag) > 0:
+                self.rackAI.append(bag.getRandomLetter())
+            score.priority = "Player"
         else:
-            print("Mistake! There is no such name '", myScore.priority, "' for priority parameter", sep="")
+            print("Mistake! There is no such name '", score.priority, "' for priority parameter", sep="")
 
 
 
@@ -595,20 +609,56 @@ def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  # Word is a 
     word = WordOnBoard(wordCells)
     return word
 
+def printStatus():
+    global myBoard, myScore, myRack, myBag
+    print("PLAYER:")
+    print("Score:", myScore.scorePlayer)
+    print("Rack:", myRack.rackPlayer)
+    print()
+    print("AI:")
+    print("Score:", myScore.scoreAI)
+    print("Rack:", myRack.rackAI)
+    print("")
+    print("Board:")
+    myBoard.printBoard()
+    print()
+    print("Bag:")
+    print(myBag.bag)
+    print()
+    print()
+    print()
+
 
 myBoard = Board(15, 15)
 myScore = Scoring()
-myRack = Rack()
 myBag = Bag()
-word = WordOnBoardConstructor("apple", 6, 6, 'h')
-myBoard.addWord(word)
+myRack = Rack(myBag)
 word1 = WordOnBoard()
 word1.addLetter(Cell(6, 7, 'p'), myBoard)
 word1.addLetter(Cell(7, 7, 'i'), myBoard)
-myBoard.printBoard()
 word1.addLetter(Cell(8, 7, 'e'), myBoard)
-myBoard.addWord(word1)
-myBoard.printBoard()
+myBoard.addWord(word1, myScore, myRack)
+printStatus()
+word2 = WordOnBoard()
+word2.addLetter(Cell(8, 7, 'e'), myBoard)
+word2.addLetter(Cell(8, 8, 'y'), myBoard)
+word2.addLetter(Cell(8, 9, 'e'), myBoard)
+myBoard.addWord(word2, myScore, myRack)
+printStatus()
+word3 = WordOnBoard()
+word3.addLetter(Cell(0, 0, 'h'), myBoard)
+word3.addLetter(Cell(1, 0, 'e'), myBoard)
+word3.addLetter(Cell(2, 0, 'l'), myBoard)
+word3.addLetter(Cell(3, 0, 'l'), myBoard)
+word3.addLetter(Cell(4, 0, 'o'), myBoard)
+myBoard.addWord(word3, myScore, myRack)
+printStatus()
+word4 = WordOnBoard()
+word4.addLetter(Cell(8, 8, 'y'), myBoard)
+word4.addLetter(Cell(8, 9, 'e'), myBoard)
+word4.addLetter(Cell(8, 10, 's'), myBoard)
+myBoard.addWord(word4, myScore, myRack)
+printStatus()
 '''
 word1 = WordOnBoardConstructor("lion", 6, 3, "h")
 print(word.getScore(myBoard))
