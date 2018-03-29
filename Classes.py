@@ -175,7 +175,7 @@ class Cell:
     def isEmpty(self):
         return self.letter == '-'
 
-    def neighborsNum(self, board):
+    def neighborsNum(self, board):   # It is better to optimize it
         boardCopy = [[] for row in range(board.height + 2)]
         for row in range(board.height + 2):
             for col in range(board.length + 2):
@@ -476,6 +476,7 @@ def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  # Word is a 
 
 myBoard = Board(15, 15)
 myScore = Scoring()
+"""
 word = WordOnBoardConstructor("nose", 6, 6, 'v')
 myBoard.addWord(word)
 ###
@@ -486,7 +487,11 @@ print(word1.getScore(myBoard))
 myBoard.addWord(word1)
 word2 = WordOnBoardConstructor("apple", 0, 0, 'h')
 print(word2.isLinked(myBoard))
-myBoard.addWord(word2)
+myBoard.addWord(word2)"""
+for x in range(0, 14):
+    for y in range(0, 14):
+        cell = Cell(x, y, 'a')
+        print(cell.neighborsNum(myBoard), end=" ")
 ###
 myBoard.printBoard()
 print(myScore.scoreAI, myScore.scorePlayer)
