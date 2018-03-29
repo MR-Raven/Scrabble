@@ -199,7 +199,7 @@ class Cell:
     def isEmpty(self):
         return self.letter == '-'
 
-    def neighborsNum(self, board):
+    def neighborsNum(self, board):   # It is better to optimize it
         boardCopy = [[] for row in range(board.height + 2)]
         for row in range(board.height + 2):
             for col in range(board.length + 2):
@@ -355,7 +355,7 @@ class Bag:
             print("Mistake! It is impossible to take the letter '", letter, "'", sep="")
             pass
 
-    def randomLetter(self):
+    def getRandomLetter(self):
         from random import randint
         letterNum = randint(0, self.lettersNum - 1)
         counter = 0
@@ -379,32 +379,33 @@ class Board:
             for col in range(boardLength):
                 self.board[row].append(Cell(row, col))
 
-    def addWord(self, word):  # Latter it is necessary to add Scoring object as a parameter
+    def addWord(self, word):  # Latter it is necessary to add Scoring object and Rack object as parameters
         if word.isValidWord(self):
-            global myScore
-            myScore.updateScore(self, word)
+            global myScore, myRack
+            myScore.updateScore(self, word, myRack)
             self.updateBoard(word)
+            myRack.drawNewTiles()
         else:  # Should i throw an exception here?
             pass
 
     def updateBoard(self, newWord):
-        rowBegin = word.cells[0].row
-        rowEnd = word.cells[len(word.cells) - 1].row
-        colBegin = word.cells[0].col
-        colEnd = word.cells[len(word.cells) - 1].col
-        for cell in word.cells:                   # Update bonuses
+        rowBegin = newWord.cells[0].row
+        rowEnd = newWord.cells[len(newWord.cells) - 1].row
+        colBegin = newWord.cells[0].col
+        colEnd = newWord.cells[len(newWord.cells) - 1].col
+        for cell in newWord.cells:                   # Update bonuses
             self.bonuses[cell.row][cell.col] = "00"
 
         # Update letters
         if rowBegin == rowEnd:  # "Horizontal orientation"
             counter = 0
-            for letter in word.string:
+            for letter in newWord.string:
                 self.board[rowBegin][colBegin + counter].letter = letter
                 counter += 1
 
         elif colBegin == colEnd:  # Vertical orientation
             counter = 0
-            for letter in word.string:
+            for letter in newWord.string:
                 self.board[rowBegin + counter][colBegin].letter = letter
                 counter += 1
 
@@ -436,7 +437,7 @@ class Scoring:
         self.scorePlayer = 0
         self.priority = self.turnPriority()
 
-    def updateScore(self, board, newWord):
+    def updateScore(self, board, newWord, rack):  # rack is an object of the class Rack
         if self.priority == "AI":
             if newWord.getOrientation() == "Horizontal":
                 for cell in newWord.cells:
@@ -449,6 +450,8 @@ class Scoring:
                         currentWord = cell.generateWord(board, "Horizontal")
                         self.scoreAI += currentWord.getScore(board)
             self.scoreAI += newWord.getScore(board)
+            if len(rack.rackAI) == 0:  # Bingo bonus
+                self.scoreAI += 50
             self.priority = "Player"
 
         elif self.priority == "Player":
@@ -463,9 +466,24 @@ class Scoring:
                         currentWord = cell.generateWord(board, "Horizontal")
                         self.scorePlayer += currentWord.getScore(board)
             self.scorePlayer += newWord.getScore(board)
+            if len(rack.rackPlayer) == 0:  # Bingo bonus
+                self.scorePlayer += 50
             self.priority = "AI"
         else:
-            print("Mistake in priority!")
+            print("Mistake! There is no such name '", self.priority, "' for priority parameter", sep="")
+
+    def gameEndRecalculation(self):  # Latter it is necessary to addRack object as a parameter
+        global myRack
+        for letter in myRack.rackAI:
+            self.scoreAI -= scores[letter]
+        for letter in myRack.rackPlayer:
+            self.scorePlayer -= scores[letter]
+        if len(myRack.rackAI) == 0:
+            for letter in myRack.rackPlayer:
+                self.scoreAI += scores[letter]
+        elif len(myRack.rackPlayer) == 0:
+            for letter in myRack.rackAI:
+                self.scorePlayer += scores[letter]
 
     def turnPriority(self):
         from random import randint
@@ -474,6 +492,62 @@ class Scoring:
             return "Player"
         else:
             return "AI"
+
+    def getWinner(self):
+        if self.scorePlayer > self.scoreAI:
+            return "Player"
+        elif self.scoreAI > self.scorePlayer:
+            return "AI"
+        else:
+            return "Draw"
+
+class Rack:
+    def __init__(self, rackPlayer = [], rackAI = []):  # letters is a list of chars
+        self.rackPlayer = rackPlayer
+        self.rackAI = rackAI
+
+    def removeLetter(self, letter, priority):  # priority is a string ("Player" or "AI")
+        if priority == "Player":
+            if letter in self.rackPlayer:
+                for i in range(len(self.rackPlayer)):
+                    if self.rackPlayer[i] == letter:
+                        del self.rackPlayer[i]
+                        break
+            else:
+                print("Mistake! There is no letter '", letter, "' in player's rack", sep="")
+        elif priority == "AI":
+            if letter in self.rackAI:
+                for i in range(len(self.rackAI)):
+                    if self.rackAI[i] == letter:
+                        del self.rackAI[i]
+                        break
+            else:
+                print("Mistake! There is no letter '", letter, "' in AI's rack", sep="")
+        else:
+            print("Mistake! There is no such name '", priority, "' for priority parameter", sep="")
+
+    def addLetter(self, letter, priority):  # Maybe it is better to sort self.letters
+        if priority == "Player":
+            if len(self.rackPlayer) < 7:
+                self.rackPlayer.append(letter)
+            else:
+                print("Mistake! It's impossible to add a letter '", letter, "' to player's rack, because it's already full")
+        elif priority == "AI":
+            if len(self.rackAI) < 7:
+                self.rackAI.append(letter)
+            else:
+                print("Mistake! It's impossible to add a letter '", letter, "' to AI's rack, because it's already full")
+
+    def drawNewTiles(self, priority):  # latter it is necessary to add a Bag object here
+        global myBag
+        if priority == "Player":
+            while len(self.rackPlayer) < 7 and len(myBag.bag) > 0:
+                self.rackPlayer.append(myBag.getRandomLetter())
+        elif priority == "AI":
+            while len(self.rackAI) < 7 and len(myBag.bag) > 0:
+                self.rackAI.append(myBag.getRandomLetter())
+        else:
+            print("Mistake! There is no such name '", priority, "' for priority parameter", sep="")
 
 
 def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  # Word is a string, rowBegin and colBegin are numbers, orientation is a char ('h' or 'v')
@@ -500,6 +574,8 @@ def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  # Word is a 
 
 myBoard = Board(15, 15)
 myScore = Scoring()
+myRack = Rack()
+myBag = Bag()
 word = WordOnBoardConstructor("at", 6, 6, 'h')
 myBoard.addWord(word)
 '''
