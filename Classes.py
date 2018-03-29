@@ -82,8 +82,23 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         cellData = []
                         for curPos in range(len(curWord.string)):
                             cellData.append(Cell(i, curPos + j, curWord.string[curPos]))
-                        if curWord.isWord() and curWord.isLinked(playBoard, cellData) and \
-                                _areFormedWordsValid(playBoard, cellData, "Horizontal"):
+                        if curWord.string == "top" and i == 6 and j == 7:
+                            print()
+                        ### New words formation check
+                        newWordsFlag = True
+                        for curLetter in range(j, j + len(curWord.string)):
+                            newFormedWord = curWord.string[curLetter - j]
+                            xMin = i - 1
+                            while xMin >= 0 and not playBoard.board[xMin][curLetter].isEmpty():
+                                newFormedWord = playBoard.board[xMin][curLetter].letter + newFormedWord
+                                xMin -= 1
+                            xMax = i + 1
+                            while xMax < playBoard.height and not playBoard.board[xMax][curLetter].isEmpty():
+                                newFormedWord += playBoard.board[xMax][curLetter].letter
+                                xMax += 1
+                            if not WordAI(newFormedWord).isWord() and len(newFormedWord) >= 2:
+                                newWordsFlag = False
+                        if curWord.isWord() and curWord.isLinked(playBoard, cellData) and newWordsFlag:
                             subWordsData.add(curWord.string)  # STRING JUST TO TEST
                     for elem in subWordsData:
                         wordsAndCoordsH.add((elem, (i, j)))
@@ -135,29 +150,27 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         cellData = []
                         for curPos in range(len(curWord.string)):
                             cellData.append(Cell(i + curPos, j, curWord.string[curPos]))
-                        goodBoardation = True
-                        if curWord.isWord() and curWord.isLinked(playBoard, cellData) and \
-                                _areFormedWordsValid(playBoard, cellData, "Vertical"):
+                        ### New words formation check
+                        newWordsFlag = True
+                        for curLetter in range(i, i + len(curWord.string)):
+                            newFormedWord = curWord.string[curLetter - i]
+                            xMin = j - 1
+                            while xMin >= 0 and not playBoard.board[curLetter][xMin].isEmpty():
+                                newFormedWord = playBoard.board[curLetter][xMin].letter + newFormedWord
+                                xMin -= 1
+                            xMax = j + 1
+                            while xMax < playBoard.length and not playBoard.board[curLetter][xMax].isEmpty():
+                                newFormedWord += playBoard.board[curLetter][xMax].letter
+                                xMax += 1
+                            if not WordAI(newFormedWord).isWord() and len(newFormedWord) >= 2:
+                                newWordsFlag = False
+                        if curWord.isWord() and curWord.isLinked(playBoard, cellData) and newWordsFlag:
                             subWordsData.add(curWord.string)
                     for elem in subWordsData:
                         wordsAndCoordsV.add((elem, (i, j)))
                         wordsOnlyV.add(elem)
         print('V')
-        print(wordsAndCoordsH)
-
-def _areFormedWordsValid(board, cellData, orientation):  # Where to put it properly??  You have a mistake here, orientation is a
-    if orientation == "Horizontal":  # You have a mistake here, orientation is a method, it should be called from an object
-        for cell in cellData:
-            if not cell.generateWord(board, "Vertical").isWord() and len(
-                    cell.generateWord(board, "Vertical").string) > 1:
-                return False
-        return cellData[0].generateWord(board, "Horizontal").isWord()
-    else:
-        for cell in cellData:
-            if not cell.generateWord(board, "Horizontal").isWord() and len(
-                    cell.generateWord(board, "Horizontal").string) > 1:
-                return False
-        return cellData[0].generateWord(board, "Vertical").isWord()
+        print(wordsAndCoordsV)
 
 
 class Cell:
@@ -177,7 +190,7 @@ class Cell:
             while rightCol < board.length and not board.board[self.row][rightCol].isEmpty():
                 rightCol += 1
             cells = []
-            for column in range(leftCol, rightCol):
+            for column in range(leftCol, rightCol + 1):
                 cells.append(board.board[self.row][column])
         else:
             bottomRow = self.row
@@ -188,7 +201,7 @@ class Cell:
             while topRow < board.height and not board.board[topRow][self.col].isEmpty():
                 topRow += 1
             cells = []
-            for row in range(bottomRow, topRow):
+            for row in range(bottomRow, topRow + 1):
                 cells.append(board.board[row][self.col])
         return WordOnBoard(cells)
 

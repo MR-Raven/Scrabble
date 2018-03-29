@@ -4,7 +4,7 @@ from config import *
 def forbiddenCheck(curWord):
     flag = True
     for i in range(len(curWord)):
-        if len(curWord) <= 3 or curWord[i] in forbidden or (curWord[i] == curWord[i].upper() and curWord[i] != '\n'):
+        if len(curWord) <= 2 or curWord[i] in forbidden or (curWord[i] == curWord[i].upper() and curWord[i] != '\n'):
             flag = False
             break
     for i in range(2, len(curWord)):
@@ -13,17 +13,18 @@ def forbiddenCheck(curWord):
             break
     return flag
 
+
 def sorting(wordDataUnsorted, type):
     firstWordsPath = "/home/pavlik/Pavlik/python/Scrabble/dicts/wordsSorted"  # The first path is for Pavlik, the second one is for Pavel
     secondWordsPath = "/home/pavel/MyDocs/Programming/Python/Scrabble/dicts/wordsSorted"
     firstHashesPath = "/home/pavlik/Pavlik/python/Scrabble/hashes/hashes"
     secondHashesPath = "/home/pavel/MyDocs/Programming/Python/Scrabble/hashes/hashes"
-    pathSorted = secondWordsPath + type + ".txt"
+    pathSorted = firstWordsPath + type + ".txt"
     wordDataSorted = open(pathSorted, "w")
-    pathHashes = secondHashesPath + type + ".txt"
+    pathHashes = firstHashesPath + type + ".txt"
     hashesData = open(pathHashes, "w")
-    curWord = wordDataUnsorted.readline()
 
+    curWord = wordDataUnsorted.readline()
     differentHashes = set() ### Collisions counter
     usedWords = set()
     while curWord:
@@ -41,7 +42,8 @@ def sorting(wordDataUnsorted, type):
 for type in dictionaries:
     firstUnsortedPath = "/home/pavlik/Pavlik/python/Scrabble/dicts/wordsUnsorted"  # The first path is for Pavlik, the second one is for Pavel
     secondUnsortedPath = "/home/pavel/MyDocs/Programming/Python/Scrabble/dicts/wordsUnsorted"
-    path = secondUnsortedPath + type + ".txt"
+    path = firstUnsortedPath + type + ".txt"
+    # CHANGE PATH IN MY COLLEAGUES COMPUTER
     wordDataUnsorted = open(path, "r")
     sorting(wordDataUnsorted, type)
     wordDataUnsorted.close()
