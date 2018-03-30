@@ -32,6 +32,8 @@ argument
 arm
 army
 art
+as
+at
 attack
 attempt
 attention
@@ -50,6 +52,7 @@ base
 basin
 basket
 bath
+be
 beautiful
 because
 bed
@@ -103,6 +106,7 @@ business
 but
 butter
 button
+by
 cake
 camera
 canvas
@@ -200,6 +204,7 @@ disgust
 distance
 distribution
 division
+do
 dog
 door
 doubt
@@ -294,6 +299,7 @@ girl
 give
 glass
 glove
+go
 goat
 gold
 good
@@ -319,6 +325,7 @@ harmony
 hat
 hate
 have
+he
 head
 healthy
 hear
@@ -341,9 +348,11 @@ how
 humour
 ice
 idea
+if
 ill
 important
 impulse
+in
 increase
 industry
 ink
@@ -461,6 +470,7 @@ net
 new
 news
 night
+no
 noise
 normal
 north
@@ -471,16 +481,19 @@ now
 number
 nut
 observation
+of
 off
 offer
 office
 oil
 old
+on
 only
 open
 operation
 opinion
 opposite
+or
 orange
 order
 organization
@@ -656,6 +669,7 @@ smooth
 snake
 sneeze
 snow
+so
 soap
 society
 sock
@@ -746,6 +760,7 @@ till
 time
 tin
 tired
+to
 toe
 together
 tomorrow
@@ -768,6 +783,7 @@ twist
 umbrella
 under
 unit
+up
 use
 value
 verse
