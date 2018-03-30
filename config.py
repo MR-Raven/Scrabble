@@ -41,7 +41,7 @@ for dict in dictionaries:
     hashesAI[dict] = hashTabling(dict)
     hashesPlayer[dict] = hashTabling(dict)
 
-dictAI = "Big"
+dictAI = "Basic"
 dictPlayer = "Large"
 isTested = True   # !!!! IF YOU NEED TO TEST SET THIS FIELD AS TRUE !!!!!!!!
 bonuses = setBonuses()

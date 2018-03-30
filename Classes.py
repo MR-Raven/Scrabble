@@ -2,13 +2,6 @@ from hashing import hashFunc
 from itertools import permutations
 from config import *
 
-
-# NESSESARY?
-class Alphabet:
-    alphabetSize = 26
-    letters = [chr(ord('a') + i) for i in range(26)]
-
-
 class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH'S ALSO COUNTING THIS WAY HERE AND IN SORTING !!!
     def __init__(self, string):  # Is local copy of type really nessesary?
         self.string = string.rstrip()
@@ -41,7 +34,6 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
         emptyData = playBoard.boardEmptiness()
         ### Horizontal
         wordsAndCoordsH = set()
-        wordsOnlyH = set()
         for i in range(playBoard.height):
             for j in range(playBoard.length - 1, -1, -1):
                 maxLetters = min(len(self.string), emptyData[i][j][0])  # Hand size irl ()
@@ -64,11 +56,13 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         else:
                             stakedLetters.append((temp + len(prevData), playBoard.board[i][j + temp].letter))
                         temp += 1
+                    postDataSize = 0
                     for k in range(j + temp, playBoard.length):
                         if playBoard.board[i][k].isEmpty():
                             break
                         else:
                             stakedLetters.append((temp + k + len(prevData), playBoard.board[i][k].letter))
+                            postDataSize += 1
                     ### Subwords search
                     subWordsData = set()
                     for psiWord in permutations(self.string, curLen):
@@ -82,12 +76,10 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         cellData = []
                         for curPos in range(len(curWord.string)):
                             cellData.append(Cell(i, curPos + j, curWord.string[curPos]))
-                        if curWord.string == "top" and i == 6 and j == 7:
-                            print()
                         ### New words formation check
                         newWordsFlag = True
-                        for curLetter in range(j, j + len(curWord.string)):
-                            newFormedWord = curWord.string[curLetter - j]
+                        for curLetter in range(j - len(prevData), j + len(curWord.string) - len(prevData)):
+                            newFormedWord = curWord.string[curLetter - j + len(prevData)]
                             xMin = i - 1
                             while xMin >= 0 and not playBoard.board[xMin][curLetter].isEmpty():
                                 newFormedWord = playBoard.board[xMin][curLetter].letter + newFormedWord
@@ -101,14 +93,12 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         if curWord.isWord() and curWord.isLinked(playBoard, cellData) and newWordsFlag:
                             subWordsData.add(curWord.string)  # STRING JUST TO TEST
                     for elem in subWordsData:
-                        wordsAndCoordsH.add((elem, (i, j)))
-                        wordsOnlyH.add(elem)
+                        wordsAndCoordsH.add((elem, (i, j - len(prevData) + postDataSize)))
         print('H')
         print(wordsAndCoordsH)
 
         ### Vertical (comments like previous)
         wordsAndCoordsV = set()
-        wordsOnlyV = set()
         for j in range(playBoard.length):
             for i in range(playBoard.height - 1, -1, -1):
                 maxLetters = min(len(self.string), emptyData[i][j][1])  # Hand size irl ()
@@ -118,6 +108,9 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                     temp = 0
                     stakedLetters = []
                     prevData = []
+                    if i == 5 and j == 5 and maxLetters == 3:
+                        print()
+
                     for k in range(i - 1, -1, -1):
                         if playBoard.board[k][j].isEmpty():
                             break
@@ -131,11 +124,13 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         else:
                             stakedLetters.append((temp + len(prevData), playBoard.board[i + temp][j].letter))
                         temp += 1
+                    postDataSize = 0
                     for k in range(i + temp, playBoard.height):
-                        if playBoard.board[i][k].isEmpty():
+                        if playBoard.board[k][j].isEmpty():
                             break
                         else:
                             stakedLetters.append((temp + k + len(prevData), playBoard.board[k][j].letter))
+                            postDataSize += 1
                     ### Subwords search
                     subWordsData = set()
                     for psiWord in permutations(self.string, curLen):
@@ -152,8 +147,10 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             cellData.append(Cell(i + curPos, j, curWord.string[curPos]))
                         ### New words formation check
                         newWordsFlag = True
-                        for curLetter in range(i, i + len(curWord.string)):
-                            newFormedWord = curWord.string[curLetter - i]
+                        if j == 5 and curString == 'to' and i == 6:
+                            print()
+                        for curLetter in range(i - len(prevData), i + len(curWord.string) - len(prevData)):
+                            newFormedWord = curWord.string[curLetter - i + len(prevData)]
                             xMin = j - 1
                             while xMin >= 0 and not playBoard.board[curLetter][xMin].isEmpty():
                                 newFormedWord = playBoard.board[curLetter][xMin].letter + newFormedWord
@@ -167,8 +164,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         if curWord.isWord() and curWord.isLinked(playBoard, cellData) and newWordsFlag:
                             subWordsData.add(curWord.string)
                     for elem in subWordsData:
-                        wordsAndCoordsV.add((elem, (i, j)))
-                        wordsOnlyV.add(elem)
+                        wordsAndCoordsV.add((elem, (i - len(prevData) + postDataSize, j)))
         print('V')
         print(wordsAndCoordsV)
 
@@ -591,7 +587,7 @@ myBoard = Board(15, 15)
 myScore = Scoring()
 myRack = Rack()
 myBag = Bag()
-word = WordOnBoardConstructor("at", 6, 6, 'h')
+word = WordOnBoardConstructor("at", 4, 4, 'h')
 myBoard.addWord(word)
 '''
 word1 = WordOnBoardConstructor("lion", 6, 3, "h")
