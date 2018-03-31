@@ -256,7 +256,7 @@ class WordOnBoard:
                                 if not board.board[firstCell.row][firstCell.col - 1].isEmpty():
                                     print("Mistake! On the left of your word there shouldn't be other letters")
                                     return False
-                            if lastCell.row + 1 < board.length:
+                            if lastCell.col + 1 < board.length:
                                 if not board.board[lastCell.row][lastCell.col + 1].isEmpty():
                                     print("Mistake! On the right of your word there shouldn't be other letters")
                                     return False
