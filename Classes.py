@@ -36,11 +36,8 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
         wordsAndCoordsH = set()
         for i in range(playBoard.height):
             for j in range(playBoard.length - 1, -1, -1):
-                linkedCheck = True
                 maxLetters = min(len(self.string), emptyData[i][j][0])  # Hand size irl ()
-                for curLen in range(maxLetters, 0, -1):
-                    if not linkedCheck:
-                        break
+                for curLen in range(1, maxLetters + 1):
                     ### Stable letters companation
                     currentEmptiness = 0
                     temp = 0
@@ -53,7 +50,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             prevData.insert(0, playBoard.board[i][k].letter)
                     for k in range(len(prevData)):
                         stakedLetters.append((k, prevData[k]))
-                    while currentEmptiness != maxLetters:
+                    while currentEmptiness != curLen:
                         if playBoard.board[i][j + temp].isEmpty():
                             currentEmptiness += 1
                         else:
@@ -78,6 +75,8 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         for letter in psiWord:
                             curString += letter
                         curWord = WordAI(curString)  # Here in the arguments was self.datatype, I deleted it, because I moved all dictTypes to config
+                        if not curWord.isWord():
+                            continue
                         cellData = []
                         for curPos in range(len(curWord.string)):
                             cellData.append(Cell(i, curPos + j, curWord.string[curPos]))
@@ -111,12 +110,9 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
         wordsAndCoordsV = set()
         for j in range(playBoard.length):
             for i in range(playBoard.height - 1, -1, -1):
-                linkedCheck = True
                 maxLetters = min(len(self.string), emptyData[i][j][1])  # Hand size irl ()
-                for curLen in range(maxLetters, 0, -1):
+                for curLen in range(2, maxLetters + 1):
                     ### Stable letters companation
-                    if not linkedCheck:
-                        break
                     currentEmptiness = 0
                     temp = 0
                     stakedLetters = []
@@ -131,7 +127,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             prevData.insert(0, playBoard.board[k][j].letter)
                     for k in range(len(prevData)):
                         stakedLetters.append((k, prevData[k]))
-                    while currentEmptiness != maxLetters:
+                    while currentEmptiness != curLen:
                         if playBoard.board[i + temp][j].isEmpty():
                             currentEmptiness += 1
                         else:
@@ -146,7 +142,6 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             postDataSize += 1
                     ### Subwords search
                     subWordsData = set()
-                    subWordsData = set()
                     linkFlag = False
                     for psiWord in permutations(self.string, curLen):
                         curString = ""
@@ -156,6 +151,8 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         for letter in psiWord:
                             curString += letter
                         curWord = WordAI(curString)
+                        if not curWord.isWord():
+                            continue
                         ### Cells and valid linking
                         cellData = []
                         for curPos in range(len(curWord.string)):
