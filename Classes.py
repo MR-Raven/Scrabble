@@ -92,6 +92,8 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                                 newWordsFlag = False
                         if curWord.isWord() and curWord.isLinked(playBoard, cellData) and newWordsFlag:
                             subWordsData.add(curWord.string)  # STRING JUST TO TEST
+                        if not curWord.isLinked(playBoard, cellData):
+                            break
                     for elem in subWordsData:
                         wordsAndCoordsH.add((elem, (i, j - len(prevData) + postDataSize)))
         print('H')
