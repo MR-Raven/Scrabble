@@ -115,7 +115,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         if playBoard.board[k][j].isEmpty():
                             break
                         else:
-                            prevData.insert(0, playBoard.board[k][j].letter)
+                            prevData.insert(0, playBoxard.board[k][j].letter)
                     for k in range(len(prevData)):
                         stakedLetters.append((k, prevData[k]))
                     while currentEmptiness != maxLetters:
@@ -147,8 +147,6 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             cellData.append(Cell(i + curPos, j, curWord.string[curPos]))
                         ### New words formation check
                         newWordsFlag = True
-                        if j == 5 and curString == 'to' and i == 6:
-                            print()
                         for curLetter in range(i - len(prevData), i + len(curWord.string) - len(prevData)):
                             newFormedWord = curWord.string[curLetter - i + len(prevData)]
                             xMin = j - 1
@@ -653,20 +651,21 @@ def printStatus():
     print()
 
 
-'''
-word = WordOnBoardConstructor("at", 4, 4, 'h')
-myBoard.addWord(word, myScore, myRack)
 
-myBoard.printBoard()
-slovo = WordAI("top")
-slovo.allPossibleWords(myBoard)
-'''
+
 myBoard = Board(15, 15)
 myScore = Scoring()
 myBag = Bag()
 myRack = Rack(myBag)
 myTurn = Turn()
 
+word = WordOnBoardConstructor("at", 4, 4, 'h')
+myBoard.addWord(word, myScore, myRack, myTurn)
+
+myBoard.printBoard()
+slovo = WordAI("top")
+slovo.allPossibleWords(myBoard)
+'''
 word1 = WordOnBoard()
 word1.addLetter(Cell(6, 7, 'p'), myBoard)
 word1.addLetter(Cell(7, 7, 'i'), myBoard)
@@ -694,3 +693,4 @@ word4.addLetter(Cell(10, 8, 's'), myBoard)
 myBoard.addWord(word4, myScore, myRack, myTurn)
 printStatus()
 
+'''
