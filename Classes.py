@@ -335,8 +335,7 @@ class WordOnBoard:
 
     def deleteLastLetter(self, board):  # It is necessary to update rack here
         if len(self.string) > 0:
-            if board.board[self.cells[-1].row][self.cells[-1].col].isNew:
-                board.deleteCell(self.cells[-1])
+            board.deleteCell(self.cells[-1])
             self.string = self.string[:-1]
             self.hash = hashFunc(self.string)
             self.cells.pop()
@@ -609,26 +608,22 @@ class Turn:
         return False
 
 
-def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  # Word is a string, rowBegin and colBegin are numbers, orientation is a char ('h' or 'v')
-    wordCells = []
+def WordOnBoardConstructor(word, board, rowBegin, colBegin, orientation):  # Word is a string, rowBegin and colBegin are numbers, orientation is a char ('h' or 'v')
+    word = WordOnBoard();
     if orientation == 'h':
         rowEnd = rowBegin
         colEnd = colBegin + len(word) - 1
         for i in range(colBegin, colEnd + 1):
             currentLetter = word[i - colBegin]
-            wordCells.append(Cell(rowBegin, i))
-            wordCells[i - colBegin].letter = currentLetter
+            word.addLetter(Cell(rowBegin, i, currentLetter), board)
 
     elif orientation == 'v':
         colEnd = colBegin
         rowEnd = rowBegin + len(word) - 1
         for i in range(rowBegin, rowEnd + 1):
             currentLetter = word[i - rowBegin]
-            wordCells.append(Cell(i, colBegin))
-            wordCells[i - rowBegin].letter = currentLetter
-
-    word = WordOnBoard(wordCells)
-    return word
+            word.addLetter(Cell(i, colBegin, currentLetter), board);
+    board.addWord(word);
 
 
 def printStatus():
