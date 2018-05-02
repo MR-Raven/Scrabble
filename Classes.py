@@ -139,14 +139,6 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             stakedLetters.append((temp + k + len(prevData), playBoard.board[k][j].letter))
                             postDataSize += 1
                     ### Subwords search
-                    subWordsData = set()
-                    subWordsData = set()
-                    linkFlag = False
-                    for psiWord in permutations(self.string, curLen):
-                        curString = ""
-                        psiWord = list(psiWord)
-                        for inserts in range(len(stakedLetters)):
-                            psiWord.insert(stakedLetters[inserts][0], stakedLetters[inserts][1])
                         for letter in psiWord:
                             curString += letter
                         curWord = WordAI(curString)
