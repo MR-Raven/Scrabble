@@ -277,7 +277,7 @@ class WordOnBoard:
         print("Mistake! Your word: '", self.string, "' is not in the dictionary", sep="")
         return False
 
-    def isWord(self):  # Checks whether the word is in dictionary
+    def isWord(self):  # Checks whether the word is in the dictionary
         return self.hash in hashesPlayer[self.dictType].keys() and self.string in hashesPlayer[self.dictType][self.hash]
 
     def isLinked(self, board):  # Checks whether there are neighbors from old Cells
