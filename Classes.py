@@ -65,6 +65,8 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             postDataSize += 1
                     ### Subwords search
                     subWordsData = set()
+                    linkFlag = False
+                    linkedCheck = False
                     for psiWord in permutations(self.string, curLen):
                         curString = ""
                         psiWord = list(psiWord)
@@ -90,9 +92,12 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                                 xMax += 1
                             if not WordAI(newFormedWord).isWord() and len(newFormedWord) >= 2:
                                 newWordsFlag = False
-                        if curWord.isWord() and curWord.isLinked(playBoard, cellData) and newWordsFlag:
+                        if not linkFlag:
+                            linkFlag = True
+                            linkedCheck = curWord.isLinked(playBoard, cellData)
+                        if curWord.isWord() and linkedCheck and newWordsFlag:
                             subWordsData.add(curWord.string)  # STRING JUST TO TEST
-                        if not curWord.isLinked(playBoard, cellData):
+                        if not linkedCheck:
                             break
                     for elem in subWordsData:
                         wordsAndCoordsH.add((elem, (i, j - len(prevData) + postDataSize)))
@@ -135,6 +140,8 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             postDataSize += 1
                     ### Subwords search
                     subWordsData = set()
+                    subWordsData = set()
+                    linkFlag = False
                     for psiWord in permutations(self.string, curLen):
                         curString = ""
                         psiWord = list(psiWord)
@@ -161,9 +168,12 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                                 xMax += 1
                             if not WordAI(newFormedWord).isWord() and len(newFormedWord) >= 2:
                                 newWordsFlag = False
-                        if curWord.isWord() and curWord.isLinked(playBoard, cellData) and newWordsFlag:
+                        if not linkFlag:
+                            linkFlag = True
+                            linkedCheck = curWord.isLinked(playBoard, cellData)
+                        if curWord.isWord() and linkedCheck and newWordsFlag:
                             subWordsData.add(curWord.string)
-                        if not curWord.isLinked(playBoard, cellData):
+                        if not linkedCheck:
                             break
                     for elem in subWordsData:
                         wordsAndCoordsV.add((elem, (i - len(prevData) + postDataSize, j)))
