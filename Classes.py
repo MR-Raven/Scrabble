@@ -115,7 +115,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         if playBoard.board[k][j].isEmpty():
                             break
                         else:
-                            prevData.insert(0, playBoxard.board[k][j].letter)
+                            prevData.insert(0, playBoard.board[k][j].letter)
                     for k in range(len(prevData)):
                         stakedLetters.append((k, prevData[k]))
                     while currentEmptiness != maxLetters:
@@ -608,22 +608,23 @@ class Turn:
         return False
 
 
-def WordOnBoardConstructor(word, board, rowBegin, colBegin, orientation):  # Word is a string, rowBegin and colBegin are numbers, orientation is a char ('h' or 'v')
-    word = WordOnBoard();
+def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  # Word is a string, rowBegin and colBegin are numbers, orientation is a char ('h' or 'v')
+    wordNew = WordOnBoard()
+    global myBoard, myScore, myRack, myBag
     if orientation == 'h':
         rowEnd = rowBegin
         colEnd = colBegin + len(word) - 1
         for i in range(colBegin, colEnd + 1):
             currentLetter = word[i - colBegin]
-            word.addLetter(Cell(rowBegin, i, currentLetter), board)
+            wordNew.addLetter(Cell(rowBegin, i, currentLetter), myBoard)
 
     elif orientation == 'v':
         colEnd = colBegin
         rowEnd = rowBegin + len(word) - 1
         for i in range(rowBegin, rowEnd + 1):
             currentLetter = word[i - rowBegin]
-            word.addLetter(Cell(i, colBegin, currentLetter), board);
-    board.addWord(word);
+            wordNew.addLetter(Cell(i, colBegin, currentLetter), myBoard)
+    myBoard.addWord(wordNew, myScore, myRack, myTurn)
 
 
 def printStatus():
@@ -655,7 +656,6 @@ myRack = Rack(myBag)
 myTurn = Turn()
 
 word = WordOnBoardConstructor("at", 4, 4, 'h')
-myBoard.addWord(word, myScore, myRack, myTurn)
 
 myBoard.printBoard()
 slovo = WordAI("top")
