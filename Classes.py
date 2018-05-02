@@ -236,8 +236,8 @@ class WordOnBoard:
     def isValidWord(self, board, turn):
         if self.isWord():
             if self.isConnected():
-                if self.isLinked(board) or self.firstTurnCheck(board, turn) or isTested:
-                    if self.areFormedWordsValid(board) or isTested:
+                if self.isLinked(board) or self.f irstTurnCheck(board, turn) or isTested:
+                    if self.areFormedWordsValid(board):
                         firstCell = self.cells[0]
                         lastCell = self.cells[len(self.string) - 1]
                         if self.getOrientation() == "Vertical":  # Word is vertical
@@ -658,7 +658,7 @@ myTurn = Turn()
 word = WordOnBoardConstructor("at", 4, 4, 'h')
 
 myBoard.printBoard()
-slovo = WordAI("top")
+slovo = WordAI("topless")
 slovo.allPossibleWords(myBoard)
 '''
 word1 = WordOnBoard()
