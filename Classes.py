@@ -25,8 +25,12 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
         wordsAndCoords = set()
         for i in range(playBoard.height):
             for j in range(playBoard.length - 1, -1, -1):
-                maxLetters = min(len(self.string), emptyData[i][j][0])  # Hand size irl ()
+                maxLetters = min(len(self.string), emptyData[i][j][0])  # Hand size (rack irl)
+                linkedCheck = False
+                linkedFlag = False
                 for curLen in range(maxLetters, 0, -1):
+                    if linkedFlag and not linkedCheck:
+                        break
                     ### Stable letters companation
                     currentEmptiness = 0
                     temp = 0
@@ -93,16 +97,17 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
         ### Vertical (comments like previous)
         for j in range(playBoard.length):
             for i in range(playBoard.height - 1, -1, -1):
-                maxLetters = min(len(self.string), emptyData[i][j][1])  # Hand size irl ()
+                maxLetters = min(len(self.string), emptyData[i][j][1])
+                linkedCheck = False
+                linkedFlag = False
                 for curLen in range(maxLetters, 0, -1):
+                    if linkedFlag and not linkedCheck:
+                        break
                     ### Stable letters companation
                     currentEmptiness = 0
                     temp = 0
                     stakedLetters = []
                     prevData = []
-                    if i == 5 and j == 5 and maxLetters == 3:
-                        print()
-
                     for k in range(i - 1, -1, -1):
                         if playBoard.board[k][j].isEmpty():
                             break
@@ -713,7 +718,6 @@ addWord("meadow", 4, 4, 'v')
 addWord("racket", 4, 8, 'v')
 
 myBoard.printBoard()
-slovo = WordAI("pizdec")
-slovo.allPossibleWords(myBoard)
+slovo = WordAI("awesome")
 print(slovo.getBestWord(myBoard))
 
