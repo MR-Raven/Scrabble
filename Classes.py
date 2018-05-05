@@ -12,18 +12,6 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
         from config import hashesAI
         return self.hash in hashesAI[self.dictType].keys() and self.string in hashesAI[self.dictType][self.hash]
 
-    def subWords(self):
-        subWordsData = set()
-        for length in range(len(self.string)):
-            for psiWord in permutations(self.string, length):
-                curString = ""
-                for letter in psiWord:
-                    curString += letter
-                curWord = WordAI(curString, self.dictType)
-                if curWord.isWord():
-                    subWordsData.add(curWord.string)  # STRING JUST TO TEST
-        return subWordsData
-
     def isLinked(self, board, cellsData):  # Checks whether there are neighbors from old Cells
         for i in range(0, len(self.string)):
             if cellsData[i].neighborsNum(board) > 0:
@@ -38,7 +26,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
         for i in range(playBoard.height):
             for j in range(playBoard.length - 1, -1, -1):
                 maxLetters = min(len(self.string), emptyData[i][j][0])  # Hand size irl ()
-                for curLen in range(1, maxLetters + 1):
+                for curLen in range(maxLetters, 0, -1):
                     ### Stable letters companation
                     currentEmptiness = 0
                     temp = 0
@@ -65,7 +53,6 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             stakedLetters.append((temp + k + len(prevData), playBoard.board[i][k].letter))
                             postDataSize += 1
                     ### Subwords search
-                    subWordsData = set()
                     linkFlag = False
                     linkedCheck = False
                     for psiWord in permutations(self.string, curLen):
@@ -107,7 +94,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
         for j in range(playBoard.length):
             for i in range(playBoard.height - 1, -1, -1):
                 maxLetters = min(len(self.string), emptyData[i][j][1])  # Hand size irl ()
-                for curLen in range(2, maxLetters + 1):
+                for curLen in range(maxLetters, 0, -1):
                     ### Stable letters companation
                     currentEmptiness = 0
                     temp = 0
@@ -137,7 +124,6 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             stakedLetters.append((temp + k + len(prevData), playBoard.board[k][j].letter))
                             postDataSize += 1
                     ### Subwords search
-                    subWordsData = set()
                     linkFlag = False
                     for psiWord in permutations(self.string, curLen):
                         curString = ""
@@ -217,7 +203,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
             if bestScore < curWord.getScore(playBoard, curWordOnBoard[1], curWordOnBoard[2], curWordOnBoard[3]):
                 bestScore = curWord.getScore(playBoard, curWordOnBoard[1], curWordOnBoard[2], curWordOnBoard[3])
                 bestWord = curWordOnBoard
-        return bestWord
+        return bestWord, bestScore
 
 
 class Cell:
@@ -722,6 +708,14 @@ myScore = Scoring()
 myBag = Bag()
 myRack = Rack(myBag)
 myTurn = Turn()
+addWord("mover", 4, 4, 'h')
+addWord("meadow", 4, 4, 'v')
+addWord("racket", 4, 8, 'v')
+
+myBoard.printBoard()
+slovo = WordAI("pizdec")
+slovo.allPossibleWords(myBoard)
+print(slovo.getBestWord(myBoard))
 
 addWord("meet", 5 , 7, 'v')
 printStatus()
