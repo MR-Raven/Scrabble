@@ -65,6 +65,8 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             postDataSize += 1
                     ### Subwords search
                     subWordsData = set()
+                    linkFlag = False
+                    linkedCheck = False
                     for psiWord in permutations(self.string, curLen):
                         curString = ""
                         psiWord = list(psiWord)
@@ -90,10 +92,13 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                                 xMax += 1
                             if not WordAI(newFormedWord).isWord() and len(newFormedWord) >= 2:
                                 newWordsFlag = False
+                        if not linkFlag:
+                            linkFlag = True
+                            linkedCheck = curWord.isLinked(playBoard, cellData)
                         if curWord.isWord() and curWord.isLinked(playBoard, cellData) and newWordsFlag:
                             subWordsData.add(curWord.string)  # STRING JUST TO TEST
-                        if not curWord.isLinked(playBoard, cellData):
-                            break
+                       # if not linkedCheck:
+                        #    break
                     for elem in subWordsData:
                         wordsAndCoordsH.add((elem, (i, j - len(prevData) + postDataSize)))
         print('H')
@@ -135,6 +140,8 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             postDataSize += 1
                     ### Subwords search
                     subWordsData = set()
+                    subWordsData = set()
+                    linkFlag = False
                     for psiWord in permutations(self.string, curLen):
                         curString = ""
                         psiWord = list(psiWord)
@@ -161,10 +168,13 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                                 xMax += 1
                             if not WordAI(newFormedWord).isWord() and len(newFormedWord) >= 2:
                                 newWordsFlag = False
+                        if not linkFlag:
+                            linkFlag = True
+                            linkedCheck = curWord.isLinked(playBoard, cellData)
                         if curWord.isWord() and curWord.isLinked(playBoard, cellData) and newWordsFlag:
                             subWordsData.add(curWord.string)
-                        if not curWord.isLinked(playBoard, cellData):
-                            break
+                        #if not linkedCheck:
+                         #   break
                     for elem in subWordsData:
                         wordsAndCoordsV.add((elem, (i - len(prevData) + postDataSize, j)))
         print('V')
@@ -659,6 +669,7 @@ myBag = Bag()
 myRack = Rack(myBag)
 myTurn = Turn()
 
+'''
 WordOnBoardConstructor("mother", 4, 4, 'h')
 WordOnBoardConstructor("meadow", 4, 4, 'v')
 WordOnBoardConstructor("racket", 4, 9, 'v')
@@ -668,18 +679,22 @@ myBoard.printBoard()
 slovo = WordAI("topless")
 slovo.allPossibleWords(myBoard)
 '''
+
 word1 = WordOnBoard()
-word1.addLetter(Cell(6, 7, 'p'), myBoard)
-word1.addLetter(Cell(7, 7, 'i'), myBoard)
-word1.addLetter(Cell(8, 7, 'e'), myBoard)
+word1.addLetter(Cell(5, 7, 'p'), myBoard)
+word1.addLetter(Cell(6, 7, 'i'), myBoard)
+word1.addLetter(Cell(7, 7, 'e'), myBoard)
 myBoard.addWord(word1, myScore, myRack, myTurn)
 printStatus()
+
+
 word2 = WordOnBoard()
-word2.addLetter(Cell(8, 7, 'e'), myBoard)
-word2.addLetter(Cell(8, 8, 'y'), myBoard)
-word2.addLetter(Cell(8, 9, 'e'), myBoard)
+word2.addLetter(Cell(7, 7, 'e'), myBoard)
+word2.addLetter(Cell(7, 8, 'y'), myBoard)
+word2.addLetter(Cell(7, 9, 'e'), myBoard)
 myBoard.addWord(word2, myScore, myRack, myTurn)
 printStatus()
+
 word3 = WordOnBoard()
 word3.addLetter(Cell(0, 0, 'h'), myBoard)
 word3.addLetter(Cell(1, 0, 'e'), myBoard)
@@ -688,11 +703,16 @@ word3.addLetter(Cell(3, 0, 'l'), myBoard)
 word3.addLetter(Cell(4, 0, 'o'), myBoard)
 myBoard.addWord(word3, myScore, myRack, myTurn)
 printStatus()
+
+
 word4 = WordOnBoard()
-word4.addLetter(Cell(8, 8, 'y'), myBoard)
-word4.addLetter(Cell(9, 8, 'e'), myBoard)
-word4.addLetter(Cell(10, 8, 's'), myBoard)
+word4.addLetter(Cell(7, 8, 'y'), myBoard)
+word4.addLetter(Cell(8, 8, 'e'), myBoard)
+word4.addLetter(Cell(9, 8, 's'), myBoard)
 myBoard.addWord(word4, myScore, myRack, myTurn)
 printStatus()
 
-'''
+WordOnBoardConstructor("son", 9, 8, 'h')
+printStatus()
+WordOnBoardConstructor("not", 9, 10, 'v')
+printStatus()
