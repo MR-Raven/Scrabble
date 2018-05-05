@@ -50,7 +50,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             prevData.insert(0, playBoard.board[i][k].letter)
                     for k in range(len(prevData)):
                         stakedLetters.append((k, prevData[k]))
-                    while currentEmptiness != maxLetters:
+                    while currentEmptiness != curLen:
                         if playBoard.board[i][j + temp].isEmpty():
                             currentEmptiness += 1
                         else:
@@ -75,6 +75,8 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         for letter in psiWord:
                             curString += letter
                         curWord = WordAI(curString)  # Here in the arguments was self.datatype, I deleted it, because I moved all dictTypes to config
+                        if not curWord.isWord():
+                            continue
                         cellData = []
                         for curPos in range(len(curWord.string)):
                             cellData.append(Cell(i, curPos + j, curWord.string[curPos]))
@@ -125,7 +127,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             prevData.insert(0, playBoard.board[k][j].letter)
                     for k in range(len(prevData)):
                         stakedLetters.append((k, prevData[k]))
-                    while currentEmptiness != maxLetters:
+                    while currentEmptiness != curLen:
                         if playBoard.board[i + temp][j].isEmpty():
                             currentEmptiness += 1
                         else:
@@ -140,7 +142,6 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             postDataSize += 1
                     ### Subwords search
                     subWordsData = set()
-                    subWordsData = set()
                     linkFlag = False
                     for psiWord in permutations(self.string, curLen):
                         curString = ""
@@ -150,6 +151,8 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         for letter in psiWord:
                             curString += letter
                         curWord = WordAI(curString)
+                        if not curWord.isWord():
+                            continue
                         ### Cells and valid linking
                         cellData = []
                         for curPos in range(len(curWord.string)):
@@ -345,7 +348,9 @@ class WordOnBoard:
             self.cells.append(cell)
             board.addCell(cell)
         else:  # Should I throw an Exception here? Surely you should
-            print("Mistake! You can't add the letter '", cell.letter, "', a word should be connected", sep="")
+            print("Mistake! You can't place the letter '", cell.letter, "' on the cell ('", cell.row, ",", cell.col, "), a word should be connected", sep="")
+            quit()
+
 
     def deleteLastLetter(self, board):  # It is necessary to update rack here
         if len(self.string) > 0:
@@ -355,6 +360,7 @@ class WordOnBoard:
             self.cells.pop()
         else:
             print("Mistake! The word is empty, you can't delete any letter!")
+            quit()
 
     def getOrientation(self):
         firstCell = self.cells[0]
@@ -400,6 +406,7 @@ class Bag:
             self.lettersNum -= 1
         else:  # Should I throw an Exception here?
             print("Mistake! It is impossible to take the letter '", letter, "'", sep="")
+            quit()
 
     def getRandomLetter(self):
         from random import randint
@@ -434,6 +441,7 @@ class Board:
         else:
             while len(word.string) > 0:
                 word.deleteLastLetter(self)
+            quit()
 
     def updateBoard(self, newWord):
         for cell in newWord.cells:         # Update bonuses
@@ -446,13 +454,15 @@ class Board:
         if self.board[cell.row][cell.col].isEmpty() or self.board[cell.row][cell.col].letter == cell.letter:
             self.board[cell.row][cell.col].letter = cell.letter
         else:
-            print("Mistake! This cell is not empty!")
+            print("Mistake! The cell with coordinates (", cell.row, ",", cell.col, ") is not empty!", sep="")
+            quit()
 
     def deleteCell(self, cell):
         if self.board[cell.row][cell.col].isNew:
             self.board[cell.row][cell.col].letter = '-'
-        else:
-            print("Mistake! This cell wasn't added during this turn, you can't delete it")
+        else:  # It's better to delete it latter, because it's useless if other methods work properly
+            print("Mistake! The cell with coordinates (", cell.row, ",", cell.col, ") wasn't added during this turn, you can't delete it")
+            quit()
 
     def printBoard(self):
         for row in range(self.height):
@@ -513,6 +523,7 @@ class Scoring:
                 self.scorePlayer += 50
         else:
             print("Mistake! There is no such name '", turn.priority, "' for priority parameter", sep="")
+            quit()
 
     def gameEndRecalculation(self, rack):  # rack is a Rack object
         for letter in rack.rackAI:
@@ -558,6 +569,7 @@ class Rack:
                         break
             else:
                 print("Mistake! There is no letter '", letter, "' in player's rack", sep="")
+                quit()
         elif priority == "AI":
             if letter in self.rackAI:
                 for i in range(len(self.rackAI)):
@@ -566,8 +578,10 @@ class Rack:
                         break
             else:
                 print("Mistake! There is no letter '", letter, "' in AI's rack", sep="")
+                quit()
         else:
             print("Mistake! There is no such name '", priority, "' for priority parameter", sep="")
+            quit()
 
     def addLetter(self, letter, priority):  # Maybe it is better to sort self.letters
         if priority == "Player":
@@ -575,11 +589,13 @@ class Rack:
                 self.rackPlayer.append(letter)
             else:
                 print("Mistake! It's impossible to add a letter '", letter, "' to player's rack, because it's already full")
+                quit()
         elif priority == "AI":
             if len(self.rackAI) < 7:
                 self.rackAI.append(letter)
             else:
                 print("Mistake! It's impossible to add a letter '", letter, "' to AI's rack, because it's already full")
+                quit()
 
     def drawNewTiles(self, bag, turn):  # bag is a Bag object, score is a Scoring object
         if turn.priority == "Player":
@@ -590,6 +606,7 @@ class Rack:
                 self.rackAI.append(bag.getRandomLetter())
         else:
             print("Mistake! There is no such name '", turn.priority, "' for priority parameter", sep="")
+            quit()
 
 class Turn:
     def __init__(self):
@@ -607,6 +624,7 @@ class Turn:
             # if self.isGameFinished():
         else:
             print("Mistake! There is no such name '", self.priority, "' for priority parameter", sep="")
+            quit()
 
     def turnPriority(self):
         from random import randint
@@ -680,39 +698,8 @@ slovo = WordAI("topless")
 slovo.allPossibleWords(myBoard)
 '''
 
-word1 = WordOnBoard()
-word1.addLetter(Cell(5, 7, 'p'), myBoard)
-word1.addLetter(Cell(6, 7, 'i'), myBoard)
-word1.addLetter(Cell(7, 7, 'e'), myBoard)
-myBoard.addWord(word1, myScore, myRack, myTurn)
+WordOnBoardConstructor("hello", 5, 7, 'v')
 printStatus()
-
-
-word2 = WordOnBoard()
-word2.addLetter(Cell(7, 7, 'e'), myBoard)
-word2.addLetter(Cell(7, 8, 'y'), myBoard)
-word2.addLetter(Cell(7, 9, 'e'), myBoard)
-myBoard.addWord(word2, myScore, myRack, myTurn)
+WordOnBoardConstructor("preview", 6, 5, 'h')
 printStatus()
-
-word3 = WordOnBoard()
-word3.addLetter(Cell(0, 0, 'h'), myBoard)
-word3.addLetter(Cell(1, 0, 'e'), myBoard)
-word3.addLetter(Cell(2, 0, 'l'), myBoard)
-word3.addLetter(Cell(3, 0, 'l'), myBoard)
-word3.addLetter(Cell(4, 0, 'o'), myBoard)
-myBoard.addWord(word3, myScore, myRack, myTurn)
-printStatus()
-
-
-word4 = WordOnBoard()
-word4.addLetter(Cell(7, 8, 'y'), myBoard)
-word4.addLetter(Cell(8, 8, 'e'), myBoard)
-word4.addLetter(Cell(9, 8, 's'), myBoard)
-myBoard.addWord(word4, myScore, myRack, myTurn)
-printStatus()
-
-WordOnBoardConstructor("son", 9, 8, 'h')
-printStatus()
-WordOnBoardConstructor("not", 9, 10, 'v')
-printStatus()
+WordOnBoardConstructor("war", 6, 11, 'h')
