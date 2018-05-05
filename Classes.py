@@ -100,7 +100,7 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             linkedCheck = curWord.isLinked(playBoard, cellData)
                         if curWord.isWord() and linkedCheck and newWordsFlag:
                             resCells.append(cellData)
-                            wordsAndCoords.add((curWord.string, (i, j - len(prevData) + postDataSize), 'h'))
+                            wordsAndCoords.add((curWord.string, i, j - len(prevData) + postDataSize, 'h'))
                         if not linkedCheck:
                             break
         ### Vertical (comments like previous)
@@ -171,13 +171,13 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                             linkFlag = True
                             linkedCheck = curWord.isLinked(playBoard, cellData)
                         if curWord.isWord() and linkedCheck and newWordsFlag:
-                            wordsAndCoords.add((curWord.string, (i - len(prevData) + postDataSize, j), 'v'))
+                            wordsAndCoords.add((curWord.string, i - len(prevData) + postDataSize, j, 'v'))
                         if not linkedCheck:
                             break
         print(wordsAndCoords)
         return wordsAndCoords
 
-    def getScore(self, board, orientation, startX, startY):
+    def getScore(self, board, startX, startY, orientation):
         score = 0
         wordMultiplier = 1
         if orientation == 'h':
@@ -214,8 +214,8 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
         bestWord = "esketit"
         for curWordOnBoard in wordList:
             curWord = WordAI(curWordOnBoard[0])
-            if bestScore < curWord.getScore(playBoard, curWordOnBoard[2], curWordOnBoard[1][0], curWordOnBoard[1][1]):
-                bestScore = curWord.getScore(playBoard, curWordOnBoard[2], curWordOnBoard[1][0], curWordOnBoard[1][1])
+            if bestScore < curWord.getScore(playBoard, curWordOnBoard[1], curWordOnBoard[2], curWordOnBoard[3]):
+                bestScore = curWord.getScore(playBoard, curWordOnBoard[1], curWordOnBoard[2], curWordOnBoard[3])
                 bestWord = curWordOnBoard
         return bestWord
 
