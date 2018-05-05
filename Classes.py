@@ -32,8 +32,9 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
 
     def allPossibleWords(self, playBoard):
         emptyData = playBoard.boardEmptiness()
+        resCells = list()
         ### Horizontal
-        wordsAndCoordsH = set()
+        wordsAndCoords = set()
         for i in range(playBoard.height):
             for j in range(playBoard.length - 1, -1, -1):
                 maxLetters = min(len(self.string), emptyData[i][j][0])  # Hand size irl ()
@@ -97,17 +98,12 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         if not linkFlag:
                             linkFlag = True
                             linkedCheck = curWord.isLinked(playBoard, cellData)
-                        if curWord.isWord() and curWord.isLinked(playBoard, cellData) and newWordsFlag:
-                            subWordsData.add(curWord.string)  # STRING JUST TO TEST
-                       # if not linkedCheck:
-                        #    break
-                    for elem in subWordsData:
-                        wordsAndCoordsH.add((elem, (i, j - len(prevData) + postDataSize)))
-        print('H')
-        print(wordsAndCoordsH)
-
+                        if curWord.isWord() and linkedCheck and newWordsFlag:
+                            resCells.append(cellData)
+                            wordsAndCoords.add((curWord.string, (i, j - len(prevData) + postDataSize), 'h'))
+                        if not linkedCheck:
+                            break
         ### Vertical (comments like previous)
-        wordsAndCoordsV = set()
         for j in range(playBoard.length):
             for i in range(playBoard.height - 1, -1, -1):
                 maxLetters = min(len(self.string), emptyData[i][j][1])  # Hand size irl ()
@@ -174,14 +170,54 @@ class WordAI:  ### !!! STRING IS STORING WITHOUT \n SYMBOL (use .rstrip()), HASH
                         if not linkFlag:
                             linkFlag = True
                             linkedCheck = curWord.isLinked(playBoard, cellData)
-                        if curWord.isWord() and curWord.isLinked(playBoard, cellData) and newWordsFlag:
-                            subWordsData.add(curWord.string)
-                        #if not linkedCheck:
-                         #   break
-                    for elem in subWordsData:
-                        wordsAndCoordsV.add((elem, (i - len(prevData) + postDataSize, j)))
-        print('V')
-        print(wordsAndCoordsV)
+                        if curWord.isWord() and linkedCheck and newWordsFlag:
+                            wordsAndCoords.add((curWord.string, (i - len(prevData) + postDataSize, j), 'v'))
+                        if not linkedCheck:
+                            break
+        print(wordsAndCoords)
+        return wordsAndCoords
+
+    def getScore(self, board, orientation, startX, startY):
+        score = 0
+        wordMultiplier = 1
+        if orientation == 'h':
+            for i in range(len(self.string)):
+                lettterMultiplier = 1
+                if board.bonuses[startX][startY + i] == "3W":
+                    wordMultiplier *= 3
+                elif board.bonuses[startX][startY + i] == "2W":
+                    wordMultiplier *= 2
+                elif board.bonuses[startX][startY + i] == "3L":
+                    lettterMultiplier = 3
+                elif board.bonuses[startX][startY + i] == "2L":
+                    lettterMultiplier = 2
+                score += lettterMultiplier * scores[self.string[i]]
+            score *= wordMultiplier
+        else:
+            for i in range(len(self.string)):
+                lettterMultiplier = 1
+                if board.bonuses[startX + i][startY] == "3W":
+                    wordMultiplier *= 3
+                elif board.bonuses[startX + i][startY] == "2W":
+                    wordMultiplier *= 2
+                elif board.bonuses[startX + i][startY] == "3L":
+                    lettterMultiplier = 3
+                elif board.bonuses[startX + i][startY] == "2L":
+                    lettterMultiplier = 2
+                score += lettterMultiplier * scores[self.string[i]]
+            score *= wordMultiplier
+        return score
+
+    def getBestWord(self, playBoard):
+        wordList = self.allPossibleWords(playBoard)
+        bestScore = -1
+        bestWord = "esketit"
+        for curWordOnBoard in wordList:
+            curWord = WordAI(curWordOnBoard[0])
+            if bestScore < curWord.getScore(playBoard, curWordOnBoard[2], curWordOnBoard[1][0], curWordOnBoard[1][1]):
+                bestScore = curWord.getScore(playBoard, curWordOnBoard[2], curWordOnBoard[1][0], curWordOnBoard[1][1])
+                bestWord = curWordOnBoard
+        return bestWord
 
 
 class Cell:
@@ -640,7 +676,7 @@ class Turn:
         return False
 
 
-def WordOnBoardConstructor(word, rowBegin, colBegin, orientation):  # Word is a string, rowBegin and colBegin are numbers, orientation is a char ('h' or 'v')
+def addWord(word, rowBegin, colBegin, orientation):  # Word is a string, rowBegin and colBegin are numbers, orientation is a char ('h' or 'v')
     wordNew = WordOnBoard()
     global myBoard, myScore, myRack, myBag
     if orientation == 'h':
@@ -673,11 +709,11 @@ def printStatus():
     myBoard.printBoard()
     print()
     print("Bag:")
+    print("Letters number -", myBag.lettersNum)
     print(myBag.bag)
     print()
     print()
     print()
-
 
 
 
@@ -687,19 +723,3 @@ myBag = Bag()
 myRack = Rack(myBag)
 myTurn = Turn()
 
-'''
-WordOnBoardConstructor("mother", 4, 4, 'h')
-WordOnBoardConstructor("meadow", 4, 4, 'v')
-WordOnBoardConstructor("racket", 4, 9, 'v')
-WordOnBoardConstructor("attack", 9, 8, 'h')
-
-myBoard.printBoard()
-slovo = WordAI("topless")
-slovo.allPossibleWords(myBoard)
-'''
-
-WordOnBoardConstructor("hello", 5, 7, 'v')
-printStatus()
-WordOnBoardConstructor("preview", 6, 5, 'h')
-printStatus()
-WordOnBoardConstructor("war", 6, 11, 'h')
