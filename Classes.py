@@ -701,8 +701,6 @@ def printStatus():
     print()
     print()
 
-
-
 myBoard = Board(15, 15)
 myScore = Scoring()
 myBag = Bag()
